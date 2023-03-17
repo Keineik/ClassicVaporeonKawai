@@ -3,11 +3,14 @@
 int M = 10, N = 10;
 vector<vector<int>> board;
 
+bool isValidBoardSize() {
+    return M*N % 4 == 0;
+}
 int generatePoke() {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     srand((time_t)ts.tv_nsec);
-    int randPoke = rand()%25 + 65;
+    int randPoke = (rand()%(M*N/4)) + 65;
     return randPoke;
 }
 void initializeBoard() {
@@ -67,16 +70,17 @@ bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
         return false;
     
     //check if legal move
+    bool isLegal = false;
     int temp1 = board[p1.first][p1.second];
     int temp2 = board[p2.first][p2.second];
     board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
-    if (checkLine(p1, p2)) return true;
-    else if (checkSmallRect(p1, p2)) return true;
-    else if (checkBigRect(p1, p2)) return true;
+    if (checkLine(p1, p2)) isLegal = true;
+    else if (checkSmallRect(p1, p2)) isLegal = true;
+    else if (checkBigRect(p1, p2)) isLegal = true;
     board[p1.first][p1.second] = temp1;
     board[p2.first][p2.second] = temp2;
 
-    return false;
+    return isLegal;
 } 
 bool checkLine(pair<int, int> p1, pair<int, int> p2) {
     if (p1.first == p2.first) {
@@ -152,23 +156,30 @@ bool checkBigRect(pair<int, int> p1, pair<int, int> p2) {
     return false;
 }
 
+bool isWin() {
+    for (int i = 1; i <= M; i++)
+        for (int j = 1; j <= N; j++)
+            if (board[i][j] != blankspace) return false;
+    return true;
+}
 void play() {
-    if (!isPlayable) {
-        cout << "No moves detected, shuffling!";
-        while(!isPlayable) shuffle();
+    if (!isPlayable()) {
+        cout << "No moves detected, shuffling!" << endl;
+        shuffle();
     }
-    
-    pair<int, int> p1, p2;
-    printBoard();
-    cout << "Type in 2 sets of coordinates you want to match (format: x1 y1 x2 y2): ";
-    cin >> p1.first >> p1.second >> p2.first >> p2.second;
-    if (isLegalMove(p1, p2)) {
-        board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
-        cout << "Move is legal" << endl;
+    else {
+        pair<int, int> p1, p2;
+        printBoard();
+        cout << "Type in 2 sets of coordinates you want to match (format: x1 y1 x2 y2): ";
+        cin >> p1.first >> p1.second >> p2.first >> p2.second;
+        if (p1.first == -1 && p1.second == -1 && p2.first == -1 && p2.second == -1) shuffle();
+        else if (isLegalMove(p1, p2)) {
+            board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
+            cout << "Move is legal" << endl;
+        }
+        else 
+            cout << "Move is not legal" << endl;
     }
-    else 
-        cout << "Move is not legal" << endl;
-    play();
 }
 
 bool isPlayable() {
@@ -185,6 +196,9 @@ bool isPlayable() {
     return false;
 }
 void shuffle() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    srand((time_t)ts.tv_nsec);
     for (int i = 1; i <= M; i++)
         for (int j = 1; j <= N; j++)
             if (board[i][j] != blankspace) {
@@ -201,9 +215,22 @@ void shuffle() {
 
 int main () {
     cout << "Welcome to Classic Vaporeon Kawai" << endl;
-    cout << "Choose board size (M x N): "; cin >> M >> N; M = 10; N = 10;
+    cout << "Choose board size (M x N with M*N is divisible by 4): "; 
+    cin >> M >> N;
+    while (!isValidBoardSize()) {
+        cout << "Invalid Board Size" << endl;
+        cout << "Choose board size (M x N with M*N is divisible by 4): "; 
+        cin >> M >> N;
+    }
+    
     initializeBoard();
-    play();
+
+    while (!isWin()) {
+        play();
+    }
+    if (isWin()) {
+        cout << "Ban da daotanbu Vaporeon";
+    }
 
     return 0;
 }

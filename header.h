@@ -9,6 +9,7 @@ using namespace std;
 int generatePoke();
 void initializeBoard();
 void printBoard();
+bool isValidBoardSize();
 
 //moves checking
 bool isLegalMove(pair<int, int> p1, pair<int, int> p2);
@@ -21,4 +22,5 @@ bool isPlayable();
 void shuffle();
 
 //game actions
+bool isWin();
 void play();
