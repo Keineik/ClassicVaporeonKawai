@@ -1,7 +1,5 @@
 #include "header.h"
-
-int M = 10, N = 10;
-vector<vector<int>> board;
+#include "userAccount.h"
 
 bool isValidBoardSize() {
     return M*N % 4 == 0;
@@ -10,10 +8,11 @@ int generatePoke() {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     srand((time_t)ts.tv_nsec);
-    int randPoke = (rand()%(M*N/4)) + 65;
+    int randPoke = (rand()%(M*N/4)) + 59;
     return randPoke;
 }
 void initializeBoard() {
+    board.clear();
     int countPoke[256] = {};
 
     vector<int> border;
@@ -42,7 +41,6 @@ void initializeBoard() {
 
     board.push_back(border);
 }
-
 void printBoard() {
     for (int i = 0; i <= M+1; i++) {
         for (int j = 0; j <= N+1; j++) {
@@ -51,6 +49,10 @@ void printBoard() {
         cout << endl;
     }
 }
+void shiftBoardUp(pair<int, int> p1, pair<int, int> p2) {
+    
+}
+
 
 bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
     //check if inside board
@@ -81,13 +83,15 @@ bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
     board[p2.first][p2.second] = temp2;
 
     return isLegal;
-} 
+}
 bool checkLine(pair<int, int> p1, pair<int, int> p2) {
+    //if line is horizontal
     if (p1.first == p2.first) {
         if (p1.second > p2.second) swap(p1, p2);
         for (int i = p1.second; i <= p2.second; i++)
             if (board[p1.first][i] != blankspace) return false;
     }
+    //if line is vertical
     else if (p1.second == p2.second) {
         if (p1.first > p2.first) swap(p1, p2);
         for (int i = p1.first; i <= p2.first; i++) 
@@ -98,14 +102,14 @@ bool checkLine(pair<int, int> p1, pair<int, int> p2) {
 }
 bool checkSmallRect(pair<int, int> p1, pair<int, int> p2) {
     if (p1.first > p2.first && p1.second > p2.second) swap(p1, p2);
-    //check legal horizontal line
+    //check legal if middle path is a horizontal line
     for (int i = p1.first; i <= p2.first; i++) {
         if (checkLine(p1, {i, p1.second}) && 
             checkLine({i, p1.second}, {i, p2.second}) && 
             checkLine({i, p2.second}, p2)) 
             return true;
     }
-    //check legal vertical line
+    //check legal if middle path is a vertical line
     for (int i = p1.second; i <= p2.second; i++) {
         if (checkLine(p1, {p1.first, i}) &&
             checkLine({p1.first, i}, {p2.first, i}) &&
@@ -179,6 +183,10 @@ void play() {
         }
         else 
             cout << "Move is not legal" << endl;
+
+        if (Level == 2) {
+            shiftBoardUp(p1, p2);
+        }
     }
 }
 
@@ -215,17 +223,13 @@ void shuffle() {
 
 int main () {
     cout << "Welcome to Classic Vaporeon Kawai" << endl;
-    cout << "Choose board size (M x N with M*N is divisible by 4): "; 
-    cin >> M >> N;
-    while (!isValidBoardSize()) {
-        cout << "Invalid Board Size" << endl;
-        cout << "Choose board size (M x N with M*N is divisible by 4): "; 
-        cin >> M >> N;
-    }
     
     initializeBoard();
-
-    while (!isWin()) {
+    while (Level < 3) {
+        if (isWin()) {
+            cout << "Ket thuc man " << Level++ << ". Chuyen sang man " << Level << endl;
+            initializeBoard();
+        }
         play();
     }
     if (isWin()) {
