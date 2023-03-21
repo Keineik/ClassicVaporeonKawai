@@ -1,8 +1,12 @@
 #pragma once
 #include <bits/stdc++.h>
-
+#include <conio.h>
+#include <windows.h>
 #define blankspace (int)'-'
-
+#define KEY_UP    72
+#define KEY_LEFT  75
+#define KEY_RIGHT 77
+#define KEY_DOWN  80
 using namespace std;
 
 int M = 8, N = 16;
