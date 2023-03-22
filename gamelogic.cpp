@@ -127,43 +127,35 @@ bool checkSmallRect(pair<int, int> p1, pair<int, int> p2) {
     return false;
 }
 bool checkBigRect(pair<int, int> p1, pair<int, int> p2) {
-    if (p1.first > p2.first && p1.second > p2.second) swap(p1, p2);
     //check big rect Ox+
-    if (checkLine(p1, {p1.first, p2.second})) {
-        for (int i = p2.second; i <= N+1; i++) {
-            if (checkLine({p1.first, p2.second}, {p1.first, i}) &&
-                checkLine({p1.first, i}, {p2.first, i}) &&
-                checkLine({p2.first, i}, p2))
-                return true;
-        }
-    }
-    //check big rect Oy+
-    if (checkLine(p2, {p1.first, p2.second})) {
-        for (int i = p1.first; i >= 0; i--) {
-            if (checkLine({p1.first, p2.second}, {i, p2.second}) &&
-                checkLine({i, p2.second}, {i, p1.second}) &&
-                checkLine({i, p1.second}, p1))
-                return true;
-        }
+    if (p1.second > p2.second) swap(p1, p2);
+    for (int i = p2.second; i <= N+1; i++) {
+        if (checkLine(p1, {p1.first, i}) &&
+            checkLine({p1.first, i}, {p2.first, i}) &&
+            checkLine({p2.first, i}, p2))
+            return true;
     }
     //check big rect Ox-
-    if (checkLine(p2, {p2.first, p1.second})) {
-        for (int i = p1.second; i >= 0; i--) {
-            if (checkLine({p2.first, p1.second}, {p2.first, i}) &&
-                checkLine({p2.first, i}, {p1.first, i}) &&
-                checkLine({p1.first, i}, p1))
-                return true;
-        }
-
+    for (int i = p1.second; i >= 0; i--) {
+        if (checkLine(p2, {p2.first, i}) &&
+            checkLine({p2.first, i}, {p1.first, i}) &&
+            checkLine({p1.first, i}, p1))
+            return true;
     }
     //check big rect Oy+
-    if (checkLine(p1, {p2.first, p1.second})) {
-        for (int i = p2.first; i <= M+1; i++) {
-            if (checkLine({p2.first, p1.second}, {i, p1.second}) &&
-                checkLine({i, p1.second}, {i, p2.second}) &&
-                checkLine({i, p2.second}, p2))
-                return true;
-        }
+    if (p1.first > p2.first) swap(p1, p2);
+    for (int i = p1.first; i >= 0; i--) {
+        if (checkLine(p2, {i, p2.second}) &&
+            checkLine({i, p2.second}, {i, p1.second}) &&
+            checkLine({i, p1.second}, p1))
+            return true;
+    }
+    //check big rect Oy+
+    for (int i = p2.first; i <= M+1; i++) {
+        if (checkLine(p1, {i, p1.second}) &&
+            checkLine({i, p1.second}, {i, p2.second}) &&
+            checkLine({i, p2.second}, p2))
+            return true;
     }
     return false;
 }
