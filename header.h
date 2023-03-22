@@ -1,38 +1,21 @@
 #pragma once
+
 #include <bits/stdc++.h>
-#include <conio.h>
 #include <windows.h>
+#include <conio.h>
+
 #define blankspace (int)'-'
-#define KEY_UP    72
-#define KEY_LEFT  75
-#define KEY_RIGHT 77
-#define KEY_DOWN  80
+
 using namespace std;
 
+//default board size
 int M = 8, N = 16;
-vector<vector<int>> board;
+int **board;
 int Level = 1;
 
-//board manipulation
-int generatePoke();
-void initializeBoard();
-void printBoard();
-bool isValidBoardSize();
-void shiftBoardUp(pair<int, int> p1, pair<int, int> p2);
-void shiftBoardDown(pair<int, int> p1, pair<int, int> p2);
-void shiftBoardLeft(pair<int, int> p1, pair<int, int> p2);
-void shiftBoardRight(pair<int, int> p1, pair<int, int> p2);
+int chosex, chosey,chosemenu = -1, isSelecting = -1;
+bool halfpair = false, endgame = false;
+int width = 90, height = 29;
+int w = 4, h = 2; // width & height of board 's cells
 
-//moves checking
-bool isLegalMove(pair<int, int> p1, pair<int, int> p2);
-bool checkLine(pair<int, int> p1, pair<int, int> p2);
-bool checkSmallRect(pair<int, int> p1, pair<int, int> p2);
-bool checkBigRect(pair<int, int> p1, pair<int, int> p2);
-
-//shuffling if no moves left
-bool isPlayable();
-void shuffle();
-
-//game actions
-bool isWin();
-void play();
+pair<int, int> p1, p2;

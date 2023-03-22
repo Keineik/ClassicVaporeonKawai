@@ -1,54 +1,14 @@
 #include "header.h"
-#include "userAccount.h"
+#include "gamelogic.cpp"
 #include "drawscreen.cpp"
-int chosex, chosey,chosemenu = -1, isSelecting = -1;
-bool halfpair = false, endgame = false;
-int width = 90, height = 29;
-int w = 4, h = 2; // width & height of board 's cells
-bool gameover = false;
-pair<int, int> p1,p2;
-bool isValidBoardSize() {
-    return M*N % 4 == 0;
-}
-int generatePoke() {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    srand((time_t)ts.tv_nsec);
-    int randPoke = (rand()%(M*N/4)) + 59;
-    return randPoke;
-}
-void initializeBoard() {
-    board.clear();
-    int countPoke[256] = {};
 
-    vector<int> border;
-    for (int i = 0; i <= N+1; i++) {
-        border.push_back(blankspace);
-    }
-    board.push_back(border);
+#define KEY_UP    72
+#define KEY_LEFT  75
+#define KEY_RIGHT 77
+#define KEY_DOWN  80
 
-    for (int i = 1; i <= M; i++) {
-        vector<int> vtemp;
-        vtemp.push_back(blankspace);
-        for (int j = 1; j <= N; j++) {
-            int randPoke;
-            while (true) {
-                randPoke = generatePoke();
-                if (countPoke[randPoke] < 4) {
-                    countPoke[randPoke]++;
-                    break;
-                }
-            }
-            vtemp.push_back(randPoke);
-        }
-        vtemp.push_back(blankspace);
-        board.push_back(vtemp);
-    }
 
-    board.push_back(border);
-}
 
-// In game key input
 void keyInput_Play(){
         switch(_getch()){
         case KEY_UP: case 'w':
@@ -113,7 +73,7 @@ void keyInput_Navigator(int sizeofMenu){
             isSelecting++;
         break;
     case 'm':
-        chosemenu = -1;
+        chosemenu = -1; 
         isSelecting = -1;
         break;
     case ' ':
@@ -137,135 +97,6 @@ void keyInput_Navigator(int sizeofMenu){
 
 }
 
-// Draw play board
-void printBoard(pair<int, int> p1, pair<int,int> p2) {
-    int floor = 0;
-    for (int i = 1; i <= M; i++) {
-        floor = (i-1)*h;
-        gotoxy(5,floor);
-        for (int j = 1; j <=  N; j++){
-            if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
-                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 4 , board[i][j]);
-            else if (chosex == i && chosey == j)
-                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 1 , board[i][j]);
-            else
-                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 6 , board[i][j]);
-
-        }
-    }
-}
-
-void shiftBoardUp(pair<int, int> p1, pair<int, int> p2) {
-
-}
-
-
-bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
-    //check if the same tile
-    if (p1.first == p2.first && p1.second == p2.second)
-        return false;
-    //check if chose blankspace
-    if (board[p1.first][p1.second] == blankspace || board[p2.first][p2.second] == blankspace)
-        return false;
-    //check if same poke
-    if (board[p1.first][p1.second] != board[p2.first][p2.second])
-        return false;
-
-    //check if legal move
-    bool isLegal = false;
-    int temp1 = board[p1.first][p1.second];
-    int temp2 = board[p2.first][p2.second];
-    board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
-    if (checkLine(p1, p2)) isLegal = true;
-    else if (checkSmallRect(p1, p2)) isLegal = true;
-    else if (checkBigRect(p1, p2)) isLegal = true;
-    board[p1.first][p1.second] = temp1;
-    board[p2.first][p2.second] = temp2;
-
-    return isLegal;
-}
-bool checkLine(pair<int, int> p1, pair<int, int> p2) {
-    //if line is horizontal
-    if (p1.first == p2.first) {
-        if (p1.second > p2.second) swap(p1, p2);
-        for (int i = p1.second; i <= p2.second; i++)
-            if (board[p1.first][i] != blankspace) return false;
-    }
-    //if line is vertical
-    else if (p1.second == p2.second) {
-        if (p1.first > p2.first) swap(p1, p2);
-        for (int i = p1.first; i <= p2.first; i++)
-            if (board[i][p1.second] != blankspace) return false;
-    }
-    else return false;
-    return true;
-}
-bool checkSmallRect(pair<int, int> p1, pair<int, int> p2) {
-    if (p1.first > p2.first && p1.second > p2.second) swap(p1, p2);
-    //check legal if middle path is a horizontal line
-    for (int i = p1.first; i <= p2.first; i++) {
-        if (checkLine(p1, {i, p1.second}) &&
-            checkLine({i, p1.second}, {i, p2.second}) &&
-            checkLine({i, p2.second}, p2))
-            return true;
-    }
-    //check legal if middle path is a vertical line
-    for (int i = p1.second; i <= p2.second; i++) {
-        if (checkLine(p1, {p1.first, i}) &&
-            checkLine({p1.first, i}, {p2.first, i}) &&
-            checkLine({p2.first, i}, p2))
-            return true;
-    }
-    return false;
-}
-bool checkBigRect(pair<int, int> p1, pair<int, int> p2) {
-    if (p1.first > p2.first && p1.second > p2.second) swap(p1, p2);
-    //check big rect Ox+
-    if (checkLine(p1, {p1.first, p2.second})) {
-        for (int i = p2.second; i <= N+1; i++) {
-            if (checkLine({p1.first, p2.second}, {p1.first, i}) &&
-                checkLine({p1.first, i}, {p2.first, i}) &&
-                checkLine({p2.first, i}, p2))
-                return true;
-        }
-    }
-    //check big rect Oy+
-    if (checkLine(p2, {p1.first, p2.second})) {
-        for (int i = p1.first; i >= 0; i--) {
-            if (checkLine({p1.first, p2.second}, {i, p2.second}) &&
-                checkLine({i, p2.second}, {i, p1.second}) &&
-                checkLine({i, p1.second}, p1))
-                return true;
-        }
-    }
-    //check big rect Ox-
-    if (checkLine(p2, {p2.first, p1.second})) {
-        for (int i = p1.second; i >= 0; i--) {
-            if (checkLine({p2.first, p1.second}, {p2.first, i}) &&
-                checkLine({p2.first, i}, {p1.first, i}) &&
-                checkLine({p1.first, i}, p1))
-                return true;
-        }
-
-    }
-    //check big rect Oy+
-    if (checkLine(p1, {p2.first, p1.second})) {
-        for (int i = p2.first; i <= M+1; i++) {
-            if (checkLine({p2.first, p1.second}, {i, p1.second}) &&
-                checkLine({i, p1.second}, {i, p2.second}) &&
-                checkLine({i, p2.second}, p2))
-                return true;
-        }
-    }
-    return false;
-}
-
-bool isWin() {
-    for (int i = 1; i <= M; i++)
-        for (int j = 1; j <= N; j++)
-            if (board[i][j] != blankspace) return false;
-    return true;
-}
 void play() {
     drawHUD(width, height);
 
@@ -291,47 +122,13 @@ void play() {
                     p1 = p2 = {0,0};
                 }
 
-            if (Level == 2) {
-                shiftBoardUp(p1, p2);
-            }
         }
 
     }
 }
 
-bool isPlayable() {
-    for (int i = 1; i <= M; i++) {
-        for (int j = 1; j <= N; j++) {
-            for (int u = 1; u <= M; u++) {
-                for (int v = 1; v <= N; v++) {
-                    if (isLegalMove({i, j}, {u, v}))
-                        return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-void shuffle() {
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    srand((time_t)ts.tv_nsec);
-    for (int i = 1; i <= M; i++)
-        for (int j = 1; j <= N; j++)
-            if (board[i][j] != blankspace) {
-                while (true) {
-                    int u = rand()%M + 1;
-                    int v = rand()%N + 1;
-                    if (board[u][v] != blankspace) {
-                        swap(board[i][j], board[u][v]);
-                        break;
-                    }
-                }
-            }
-}
 
 int main () {
-
     chosex = 1; chosey = 1;
     SetWindowSize();
     MoveWindow(0,0);
@@ -382,9 +179,5 @@ int main () {
             else chosemenu = -1;
         }
     }
-    //if (isWin()) {
-      //  cout << "Ban da daotanbu Vaporeon";
-    //}
-
     return 0;
 }

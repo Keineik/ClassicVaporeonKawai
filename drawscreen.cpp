@@ -1,5 +1,5 @@
-#include <windows.h>
-#include <stdio.h>
+#include "drawscreen.h"
+
 
 // Set console pointer to coordinator (x,y)
 void gotoxy(int x, int y)
@@ -134,7 +134,6 @@ void drawCell(int x, int y, int w, int h, int color, char c){
     Highscore: 2
     Credit: 3
     Quit: 4
-
 */
 void drawMainMenu(int x,int y,int isSelecting){
     string s[5] = {"PLAY","HOW TO PLAY","HIGH SCORE","CREDIT", "QUIT"};
@@ -169,3 +168,20 @@ void drawHUD(int width, int height){
     drawBox(width+1,5,15,4,6,"TIMER");
 }
 
+// Draw play board
+void printBoard(pair<int, int> p1, pair<int,int> p2) {
+    int floor = 0;
+    for (int i = 1; i <= M; i++) {
+        floor = (i-1)*h;
+        gotoxy(5,floor);
+        for (int j = 1; j <=  N; j++){
+            if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
+                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 4 , board[i][j]);
+            else if (chosex == i && chosey == j)
+                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 1 , board[i][j]);
+            else
+                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 6 , board[i][j]);
+
+        }
+    }
+}
