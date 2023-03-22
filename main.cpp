@@ -35,6 +35,16 @@ void keyInput_Play(){
             else
                 chosey = N;
             break;
+        case 'r':
+            //for testing
+            p1 = p2 = {0,0};
+            halfpair = false;
+            deleteBoard();
+            initializeBoard();
+            shuffle();
+            clearCanvas(1,1,width - 2, height - 2);
+            chosex = chosey = 1;
+            Sleep(20);
         case ' ':
             if (halfpair){
                 p2.first = chosex;
@@ -73,11 +83,12 @@ void keyInput_Navigator(int sizeofMenu){
             isSelecting++;
         break;
     case 'm':
-        chosemenu = -1; 
+        chosemenu = -1;
         isSelecting = -1;
         break;
     case ' ':
         if (isSelecting == 0){
+                deleteBoard();
             initializeBoard();
             chosex = 1; chosey = 1;
             p1 = {0,0};
@@ -108,7 +119,7 @@ void play() {
         clearCanvas(1,1,width - 2, height - 2);
     }
     else {
-        printBoard(p1,p2);
+        printBoard(width,height,p1,p2);
         keyInput_Play();
         if (p1.first > 0 && p1.second > 0 && p2.first > 0 && p2.second > 0){
             if (p1.first == -1 && p1.second == -1 && p2.first == -1 && p2.second == -1)
@@ -128,10 +139,12 @@ void play() {
 }
 
 
+
 int main () {
+    ShowConsoleCursor(false);
+    resizeConsole(0,0, 900,800);
+    char username[100], password[100];
     chosex = 1; chosey = 1;
-    SetWindowSize();
-    MoveWindow(0,0);
     drawBox(0,0,width,height,6, " ");
     Sleep(10);
     initializeBoard();
@@ -142,15 +155,23 @@ int main () {
         //}
         //play();
         if (chosemenu == -1){
-            drawMainMenu((width - 20) / 2, (height - 4*3) / 2, isSelecting);
+            drawMainMenu(width, height , isSelecting);
             keyInput_Navigator(5);
         }
         else if(chosemenu == 0){
-            drawLoginMenu((width - 20) / 2, (height - 3*3) / 2, isSelecting);
+            drawLoginMenu(width, height, isSelecting);
             keyInput_Navigator(3);
 
         }
         else if(chosemenu == 1){
+            drawHow2Play();
+            if(_getch()){
+               // clearCanvas(1,1,width - 2, height - 2);
+               clearScreen();
+                drawBox(0,0,width,height,6, " ");
+                chosemenu = -1;
+
+            }
 
         }
 
@@ -167,11 +188,26 @@ int main () {
         }
 
         else if(chosemenu == 5){
+            drawLoginForm(width,height,username,password);
+            if(_getch()){
+               // clearCanvas(1,1,width - 2, height - 2);
+                clearScreen();
+                drawBox(0,0,width,height,6, " ");
+                chosemenu = -1;
 
+            }
         }
 
         else if(chosemenu == 6){
+            drawSignupForm(width,height,username,password);
+            if(_getch()){
+               // clearCanvas(1,1,width - 2, height - 2);
+                clearScreen();
+                drawBox(0,0,width,height,6, " ");
 
+                chosemenu = -1;
+
+            }
         }
         else if (chosemenu == 7){
             if (!isWin())
@@ -179,5 +215,6 @@ int main () {
             else chosemenu = -1;
         }
     }
+    deleteBoard();
     return 0;
 }

@@ -10,6 +10,7 @@ int generatePoke() {
     int randPoke = (rand()%numOfPoke) + 59;
     return randPoke;
 }
+
 void initializeBoard() {
     // dynamic memory allocation
     board = new int *[M+2];

@@ -10,13 +10,13 @@ void gotoxy(int x, int y)
   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void MoveWindow(int posx, int posy)
+void resizeConsole(int posx, int posy, int width, int height)
 {
     RECT rectClient, rectWindow;
     HWND hWnd = GetConsoleWindow();
     GetClientRect(hWnd, &rectClient);
     GetWindowRect(hWnd, &rectWindow);
-    MoveWindow(hWnd, posx, posy, 400, 200, TRUE);
+    MoveWindow(hWnd,posx,posy,width,height,TRUE);
 }
 
 void SetWindowSize()
@@ -69,6 +69,41 @@ void clearCanvas(int x, int y, int width, int height){
     }
 }
 
+void clearScreen(){
+    HANDLE                     hStdOut;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    DWORD                      count;
+    DWORD                      cellCount;
+    COORD                      homeCoords = { 0, 0 };
+
+    hStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
+    if (hStdOut == INVALID_HANDLE_VALUE) return;
+
+    /* Get the number of cells in the current buffer */
+    if (!GetConsoleScreenBufferInfo( hStdOut, &csbi )) return;
+    cellCount = csbi.dwSize.X *csbi.dwSize.Y;
+
+    /* Fill the entire buffer with spaces */
+    if (!FillConsoleOutputCharacter(
+        hStdOut,
+        (TCHAR) ' ',
+        cellCount,
+        homeCoords,
+        &count
+    )) return;
+
+    /* Fill the entire buffer with the current colors and attributes */
+    if (!FillConsoleOutputAttribute(
+        hStdOut,
+        csbi.wAttributes,
+        cellCount,
+        homeCoords,
+        &count
+    )) return;
+
+    /* Move the cursor home */
+    SetConsoleCursorPosition( hStdOut, homeCoords );
+}
 
 // Draw box
 void drawBox(int x, int y, int w, int h, int color, string s){
@@ -135,8 +170,10 @@ void drawCell(int x, int y, int w, int h, int color, char c){
     Credit: 3
     Quit: 4
 */
-void drawMainMenu(int x,int y,int isSelecting){
+void drawMainMenu(int width,int height,int isSelecting){
     string s[5] = {"PLAY","HOW TO PLAY","HIGH SCORE","CREDIT", "QUIT"};
+    int x = (width - 20) / 2;
+    int y = (height - 4*3) / 2;
     int color = 6,selectcolor = 9;
     for (int i = 0; i<5; i++){
         if (isSelecting==i)
@@ -147,10 +184,12 @@ void drawMainMenu(int x,int y,int isSelecting){
     }
 }
 
-void drawLoginMenu(int x, int y, int isSelecting){
+void drawLoginMenu(int width, int height, int isSelecting){
 
     string s[3] = {"Log in", "Sign up", "Play as guest" };
     int color = 6,selectcolor = 9;
+    int x = ( width - 20) / 2;
+    int y = (height - 3*3) / 2;
     for (int i = 0; i<3; i++){
         if (isSelecting==i)
             drawBox(x,y +(i * 2 + i) , 20, 2,selectcolor, s[i]);
@@ -158,7 +197,52 @@ void drawLoginMenu(int x, int y, int isSelecting){
             drawBox(x,y +(i * 2 + i) , 20, 2,color, s[i]);
     }
 }
+// Draw Login/Signup Form
 
+void drawLoginForm(int width, int height, char username[], char password[]){
+    int x, y;
+    x = (width - 20) / 2;
+    y = (height - (2*4)) / 2;
+    gotoxy(x,y);
+    SetColor(6);
+    cout << "USERNAME";
+    drawBox(x,y+1,20,2,6," ");
+    gotoxy(x, y + 5);
+    cout << "PASSWORD";
+    drawBox(x,y + 6, 20,2,6," ");
+}
+
+void drawSignupForm(int width, int height, char username[], char password[]){
+    int x, y;
+    x = (width - 20) / 2;
+    y = (height - (2*6)) / 2;
+    gotoxy(x,y);
+    SetColor(6);
+    cout << "USERNAME";
+    drawBox(x,y+1,20,2,6," ");
+    gotoxy(x, y + 4);
+    cout << "PASSWORD";
+    drawBox(x,y + 5, 20,2,6," ");
+    gotoxy(x,y+8);
+    cout << "RE-TYPE PASSWORD";
+    drawBox(x,y+9,20,2,6," ");
+}
+
+
+// Draw How to play
+
+void drawHow2Play(){
+    gotoxy (5,5);
+    cout << "Interaction:";
+    gotoxy(10,6);
+    cout << "Move :";
+    gotoxy(12, 10);
+    cout << "WASD";drawCell(17, 11,4,2,6,'A'); drawCell(23,8,4,2,6,'W'); drawCell(23,11,4,2,6,'S'); drawCell(29,11,4,2,6,'D');
+    gotoxy(12,17);
+    cout << "ARROWKEYS"; drawCell(22, 18,4,2,6,'<'); drawCell(28,15,4,2,6,'^'); drawCell(28,18,4,2,6,'v'); drawCell(34,18,4,2,6,'>');
+    gotoxy(12,24);
+    cout << "Select:"; drawBox(22,23,16,2,6,"   SPACEBAR   ");
+}
 // Draw In-game HUD
 
 void drawHUD(int width, int height){
@@ -169,19 +253,33 @@ void drawHUD(int width, int height){
 }
 
 // Draw play board
-void printBoard(pair<int, int> p1, pair<int,int> p2) {
+void printBoard(int width, int height,pair<int, int> p1, pair<int,int> p2) {
+    int startx, starty;
+    startx = 2;
+    starty = 2;
     int floor = 0;
     for (int i = 1; i <= M; i++) {
         floor = (i-1)*h;
-        gotoxy(5,floor);
         for (int j = 1; j <=  N; j++){
             if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
-                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 4 , board[i][j]);
+                drawCell(startx+(j-1)*w + j, starty+floor+i, w, h , 4 , board[i][j]);
             else if (chosex == i && chosey == j)
-                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 1 , board[i][j]);
+                drawCell(startx+(j-1)*w + j, starty+floor+i, w, h , 1 , board[i][j]);
             else
-                drawCell(2+(j-1)*w + j, 2+floor+i, w, h , 6 , board[i][j]);
+                drawCell(startx+(j-1)*w + j, starty+floor+i, w, h , 6 , board[i][j]);
 
         }
     }
+}
+
+//Hide show cursor
+void ShowConsoleCursor(bool showFlag)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    CONSOLE_CURSOR_INFO     cursorInfo;
+
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = showFlag; // set the cursor visibility
+    SetConsoleCursorInfo(out, &cursorInfo);
 }
