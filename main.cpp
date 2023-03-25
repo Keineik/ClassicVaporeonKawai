@@ -45,6 +45,7 @@ void keyInput_Play(){
             clearCanvas(1,1,width - 2, height - 2);
             chosex = chosey = 1;
             Sleep(20);
+            break;
         case ' ':
             if (halfpair){
                 p2.first = chosex;
@@ -58,6 +59,15 @@ void keyInput_Play(){
             }
 
             break;
+        case 'h':{
+            auto moveSuggested = moveSuggestion();
+            p1= moveSuggested.first;
+            chosex = moveSuggested.second.first;
+            chosey = moveSuggested.second.second;
+            halfpair = true;
+            break;
+        }
+
         case 'm':
             chosemenu = -1;
             clearCanvas(0,0,120,50);
@@ -93,6 +103,8 @@ void keyInput_Navigator(int sizeofMenu){
             chosex = 1; chosey = 1;
             p1 = {0,0};
             p2 = {0,0};
+            boardposx = calculatBoardPosX(width,w,N);
+            boardposy = calculatBoardPosY(height,h,M);
         }
         if (chosemenu == 0){
             chosemenu = isSelecting + 5;
@@ -108,24 +120,30 @@ void keyInput_Navigator(int sizeofMenu){
 
 }
 
+
 void play() {
     drawHUD(width, height);
 
     if (!isPlayable()) {
         clearCanvas(1,1,width - 2, height - 2);
-        drawBox((width - 20)/2,(height-5)/2,20,5,6,"No valid move, shuffle!!!");
+        drawBox((width - 50)/2,(height-5)/2,50,5,6,"No valid move, shuffle!!! Press any key");
+        _getch();
         shuffle();
-        Sleep(10);
+        Sleep(50);
         clearCanvas(1,1,width - 2, height - 2);
     }
     else {
-        printBoard(width,height,p1,p2);
+        printBoard(width,height,p1,p2,boardposx,boardposy);
         keyInput_Play();
         if (p1.first > 0 && p1.second > 0 && p2.first > 0 && p2.second > 0){
             if (p1.first == -1 && p1.second == -1 && p2.first == -1 && p2.second == -1)
                 shuffle();
             else if (isLegalMove(p1, p2)) {
                 board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
+                drawPath(path,boardposx,boardposy);
+                gotoxy(101,40);
+                cout << size(path);
+                Sleep(100);
                 p1 = p2 = {0,0};
                 }
                 else
@@ -138,11 +156,9 @@ void play() {
     }
 }
 
-
-
 int main () {
     ShowConsoleCursor(false);
-    resizeConsole(0,0, 900,800);
+    resizeConsole(0,0, 1000,800);
     char username[100], password[100];
     chosex = 1; chosey = 1;
     drawBox(0,0,width,height,6, " ");
@@ -218,3 +234,4 @@ int main () {
     deleteBoard();
     return 0;
 }
+
