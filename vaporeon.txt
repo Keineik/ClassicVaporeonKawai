@@ -1,0 +1,25 @@
+4
+9 1 11 7
+7 A G
+                   .                     
+                 7A:                   
+             .7777A777777.             
+      AAA  .77777AA77AA7777^  AG.      
+      :YGAA?AAAAAAAAA0AAAA7AAAG!       
+        :77AGGG_GGAGGGG_GAAGGG         
+         77GG\ *\GGGG/*  /GGG7:        
+         :7777\ _\GG/_ _/GG777:        
+          :777GGGG GGGGGG7777~         
+          :~777GGGGGGGG77777:          
+             :7777GGG777777!^:..       
+               ^77777777777GAAAA^:.    
+               .GJ!7GG57GGGGGGAAAA^^.  
+                YB?GPG75GGGGGGGGGGAA^: 
+   .^!7!~.      .GYGG:~G@&GGGGGGGGAA:.
+ ?GGGGGGGG::...:^GY55Y7!GGGGGGGGGG/GA:!
+  :^!5GGGGGGGGGG!!~GG?GGGGGGGGGG/PJAA^
+     !5PGGGG^AAAJAAAAAA!!~!!~!!^!7!7A! 
+    P#GGGGP^      :.. .AAAAAAAAAAAAA.  
+   :#PGGJ^                  .....      
+    5G.                               
+    ^.         

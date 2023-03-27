@@ -1,11 +1,11 @@
 #include "header.h"
 #include "gamelogic.cpp"
 #include "drawscreen.cpp"
-
 #define KEY_UP    72
 #define KEY_LEFT  75
 #define KEY_RIGHT 77
 #define KEY_DOWN  80
+
 
 
 
@@ -70,6 +70,7 @@ void keyInput_Play(){
 
         case 'm':
             chosemenu = -1;
+            entermainmenu = true;
             clearCanvas(0,0,120,50);
             drawBox(0,0,width,height,6, " ");
             break;
@@ -112,6 +113,7 @@ void keyInput_Navigator(int sizeofMenu){
         else
             chosemenu = isSelecting;
         isSelecting = -1;
+        entermainmenu = true;
         clearCanvas(1,1,width - 2, height - 2);
         break;
     default:
@@ -158,7 +160,7 @@ void play() {
 
 int main () {
     ShowConsoleCursor(false);
-    resizeConsole(0,0, 1000,800);
+    resizeConsole((1920-1000)/2,(1080-800)/2, 1000,800);
     char username[100], password[100];
     chosex = 1; chosey = 1;
     drawBox(0,0,width,height,6, " ");
@@ -171,6 +173,12 @@ int main () {
         //}
         //play();
         if (chosemenu == -1){
+            if(entermainmenu){
+                drawImage(1,1,100,"title.txt");
+                drawImage(1,20,50,"pikachu.txt");
+                drawImage(61,17,50,"vaporeon.txt");
+                entermainmenu = false;
+            }
             drawMainMenu(width, height , isSelecting);
             keyInput_Navigator(5);
         }
@@ -220,15 +228,19 @@ int main () {
                // clearCanvas(1,1,width - 2, height - 2);
                 clearScreen();
                 drawBox(0,0,width,height,6, " ");
-
                 chosemenu = -1;
+                entermainmenu =  true;
 
             }
         }
         else if (chosemenu == 7){
             if (!isWin())
                 play();
-            else chosemenu = -1;
+            else {
+                chosemenu = -1;
+                entermainmenu =  true;
+            }
+
         }
     }
     deleteBoard();

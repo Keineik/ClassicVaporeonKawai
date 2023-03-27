@@ -1,6 +1,8 @@
 #include "header.h"
 #include <windows.h>
-
+#define ENTER '\r'
+#define SPACE ' '
+#define BACKSPACE 8
 void gotoxy(int x, int y);
 void MoveWindow(int posx, int posy);
 void resizeConsole(int posx, int posy, int width, int height);

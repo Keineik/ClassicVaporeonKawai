@@ -1,0 +1,24 @@
+1st line: The number of colors used (If there is 1 only the other default color for lining is White)
+2nd line: Sequential color code based on color table of C++
+3rd line: Char that will be colored ( usally numbers of colors minuses 1, the last color mentioned above is for lining purposes)
+Present code supports up to 3 colors
+E.g:
+
+3
+6 4 7
+B E
+.::^.                                   
+ :^BBPJ~.                           :^^.
+  .YBBBBBP7:                  .:!JPBBBJ.
+   .5BBBBBBB5^     .....  .~?PBBBBBBBG: 
+     !GBBBBBBBGPGGBBBBBBBGGBBBBBBBBBP.  
+      .7GGBBBBBBBBBBBBBBBBBBBBBB#BP~    
+        7BBBBBBBBBBBBBBBBBBBBBBGJ.      
+       ^B#B8   BBBBBBBBB8   BBBBG:      
+      .GBB     BBBBBBBBB     BBBBBP      
+      ?G5EEBBBBBBBBBBBBBBBBBBEEGBB!     
+     .5JEEEEBBBBBB   BBBBBBBEEEEBBG.    
+      YBBEEBBBBBB     BBBBBBPEEGBBB?    
+       5BBBBBBBBBB    BBBBBBBBBBBBBG.   
+        5#BBBBBBBBBBBBBBBBBBBBBBBBB#~   
+        5BBBBBBBBBBBBBBBBBBBBBBBBBBB?  

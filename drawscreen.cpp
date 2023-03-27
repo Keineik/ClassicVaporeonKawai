@@ -1,6 +1,4 @@
 #include "drawscreen.h"
-
-
 // Set console pointer to coordinator (x,y)
 void gotoxy(int x, int y)
 {
@@ -203,31 +201,155 @@ void drawLoginMenu(int width, int height, int isSelecting){
 
 void drawLoginForm(int width, int height, char username[], char password[]){
     int x, y;
-    x = (width - 20) / 2;
+    x = (width - 60) / 2;
     y = (height - (2*4)) / 2;
+    char c; int countchar = 0;
     gotoxy(x,y);
     SetColor(6);
-    cout << "USERNAME";
-    drawBox(x,y+1,20,2,6," ");
+    cout << "Username (No longer than 15 chars)";
+    drawBox(x,y+1,60,2,6," ");
     gotoxy(x, y + 5);
-    cout << "PASSWORD";
-    drawBox(x,y + 6, 20,2,6," ");
+    cout << "PASSWORD (No longer than 15 chars)";
+    drawBox(x,y + 6, 60,2,6," ");
+    ShowConsoleCursor(true);
+    gotoxy(x+1,(y+1)+(2/2));
+    while(c = _getch()){
+        if (c == ENTER){
+            username[countchar] = '\0';
+            break;
+        }
+
+        else if (c == 8 && countchar > 0){
+            countchar = ((countchar - 1)>0 ? countchar -1 : 0);
+            gotoxy(x+1+countchar,y+1+2/2);
+            cout << " ";
+            gotoxy(x+1+countchar,y+1+2/2);
+
+        }
+        else if (c!= 8 && countchar < 50 && countchar >= 0){
+            cout << c;
+            username[countchar] = c;
+            countchar++;
+        }
+
+    }
+    gotoxy(0,42); cout << username;
+    countchar = 0;
+    gotoxy(x+1,(y+6)+(2/2));
+    while(c = _getch()){
+        if (c == ENTER){
+            password[countchar] = '\0';
+            break;
+
+        }
+        else if (c == 8 && countchar > 0){
+            countchar = ((countchar - 1)>0 ? countchar -1 : 0);
+            gotoxy(x+1+countchar,y+6+2/2);
+            cout << " ";
+            gotoxy(x+1+countchar,y+6+2/2);
+
+            }
+        else
+            if (c!= 8 && countchar < 50 && countchar >= 0 ){
+                cout << c;
+                password[countchar] = c;
+                countchar++;
+            }
+
+    }
+    gotoxy(0,42); cout << password;
+    ShowConsoleCursor(false);
 }
 
 void drawSignupForm(int width, int height, char username[], char password[]){
     int x, y;
-    x = (width - 20) / 2;
+    int countchar = 0;
+    char rewritepassword[60];
+    char c;
+    x = (width - 60) / 2;
     y = (height - (2*6)) / 2;
     gotoxy(x,y);
     SetColor(6);
-    cout << "USERNAME";
-    drawBox(x,y+1,20,2,6," ");
+    cout << "USERNAME (No longer than 15 chars)";
+    drawBox(x,y+1,60,2,6," ");
     gotoxy(x, y + 4);
-    cout << "PASSWORD";
-    drawBox(x,y + 5, 20,2,6," ");
+    cout << "PASSWORD (No longer than 15 chars)";
+    drawBox(x,y + 5, 60,2,6," ");
     gotoxy(x,y+8);
     cout << "RE-TYPE PASSWORD";
-    drawBox(x,y+9,20,2,6," ");
+    drawBox(x,y+9,60,2,6," ");
+    ShowConsoleCursor(true);
+    gotoxy(x+1,(y+1)+(2/2));
+    while(c = _getch()){
+        if (c == ENTER){
+            username[countchar] = '\0';
+            break;
+        }
+
+        else if (c == 8 && countchar > 0){
+            countchar = ((countchar - 1)>0 ? countchar -1 : 0);
+            gotoxy(x+1+countchar,y+1+2/2);
+            cout << " ";
+            gotoxy(x+1+countchar,y+1+2/2);
+
+        }
+        else if (c!= 8 && countchar < 49 && countchar >= 0){
+            cout << c;
+            username[countchar] = c;
+            countchar++;
+        }
+
+    }
+
+    gotoxy(0,42); cout << username;
+    countchar = 0;
+    gotoxy(x+1,(y+5)+(2/2));
+    while(c = _getch()){
+        if (c == ENTER){
+            password[countchar] = '\0';
+            break;
+
+        }
+        else if (c == 8 && countchar > 0){
+            countchar = ((countchar - 1)>0 ? countchar -1 : 0);
+            gotoxy(x+1+countchar,y+5+2/2);
+            cout << " ";
+            gotoxy(x+1+countchar,y+5+2/2);
+
+            }
+        else
+            if (c!= 8 && countchar < 49 && countchar >= 0 ){
+                cout << c;
+                password[countchar] = c;
+                countchar++;
+            }
+
+    }
+    gotoxy(0,42); cout << password;
+    countchar = 0;
+    gotoxy(x+1,(y+9)+(2/2));
+    while(c = _getch()){
+        if (c == ENTER){
+            rewritepassword[countchar] = '\0';
+            break;
+        }
+
+        else if (c == 8 && countchar > 0){
+            countchar = ((countchar - 1)>0 ? countchar -1 : 0);
+            gotoxy(x+1+countchar,y+9+2/2);
+            cout << " ";
+            gotoxy(x+1+countchar,y+9+2/2);
+
+        }
+        else if (c!= 8 && countchar < 49 && countchar >= 0 ){
+            cout << c;
+            rewritepassword[countchar] = c;
+            countchar++;
+        }
+
+    }
+    gotoxy(0,42); cout << rewritepassword;
+    ShowConsoleCursor(false);
 }
 
 
@@ -572,4 +694,68 @@ void ShowConsoleCursor(bool showFlag)
     GetConsoleCursorInfo(out, &cursorInfo);
     cursorInfo.bVisible = showFlag; // set the cursor visibility
     SetConsoleCursorInfo(out, &cursorInfo);
+}
+
+
+//Draw Game Title
+void drawImage(int x, int y, int patterlen, string imagefile){
+    char c[patterlen];
+    int line = 0;
+    ifstream ifs;
+    ifs.open(imagefile);
+    int colors = 0;
+    ifs >> colors;
+    char pattern[colors-1];
+    int color[colors];
+    int i = 0;
+    for (i = 0; i < colors; i++)
+        ifs >> color[i];
+    for (i = 0; i < colors-1; i++)
+        ifs >> pattern[i];
+    if (ifs.is_open()){
+        pattern[i];
+    gotoxy(x,y);
+    while (!ifs.eof()){
+        ifs.getline(c,patterlen,'\n');
+        i = 0;
+        while (c[i] != '\0'){
+            if (c[i] != ' '){
+                if (colors == 1)
+                    if (c[i] == pattern[0])
+                        SetColor(color[0]);
+                    else
+                        SetColor(7);
+                else if (colors == 2){
+                    if (c[i] == pattern[0])
+                        SetColor(color[0]);
+                    else
+                        SetColor(color[1]);
+                }
+                else if (colors == 3){
+                    if (c[i] == pattern[0])
+                        SetColor(color[0]);
+                    else if (c[i] == pattern[1])
+                        SetColor(color[1]);
+                    else
+                        SetColor(color[2]);
+                    }
+                else if (colors == 4){
+                    if (c[i] == pattern[0])
+                        SetColor(color[0]);
+                    else if (c[i] == pattern[1])
+                        SetColor(color[1]);
+                    else if (c[i] == pattern[2])
+                        SetColor(color[2]);
+                    else
+                        SetColor(color[3]);
+                }
+                gotoxy(x+i,y+line);
+                cout << c[i];
+            }
+            i++;
+        }
+        line++;
+    }
+    }
+    ifs.close();
 }
