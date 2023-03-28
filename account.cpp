@@ -39,9 +39,11 @@ void readBinFile() {
 }
 
 void xorCstr(char* dcstr, char* cstr, char mask, int size) {
-    for (int i = 0; i < size; i++) {
+    int i = 0;
+    for (i = 0; cstr[i] != '\0'; i++) {
         dcstr[i] = cstr[i] ^ mask;
     }
+    dcstr[i] = '\0';
 }
 
 void writeBinFile() {
@@ -63,9 +65,8 @@ void writeBinFile() {
 
         for (int i = 0; i < 5; i++)
             fs.write((char*)&tempsf.state[i], sizeof(State));
-        
-        fs.close();
     }
+    fs.close();
 }
 
 int signUp(char* username, char* password, char* retypePassword) {

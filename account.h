@@ -53,7 +53,7 @@ bool login(char* username, char* password);
 void logout();
 void saveGame(int saveSlot);
 void loadGame(int saveSlot);
-void updateRecords(Record record);
+void updateBestRecords(Record record);
 
 // LEADERBOARD
 void updateLeaderboard();
