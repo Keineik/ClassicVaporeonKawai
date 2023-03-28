@@ -1,2 +1,2 @@
 # ClassicVaporeonKawai
-C++ game project of two HCMUS students
+C++ game project of two HCMUS - K22 students
