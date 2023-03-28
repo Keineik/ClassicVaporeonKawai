@@ -38,8 +38,7 @@ struct topPlayer {
     char name[NAMESIZE];
     int points;
 };
-vector<topPlayer> leaderboard;
-int top5score = -1;
+vector<topPlayer> leaderboard(5, {"\0", 0});
 
 // BINARY FILE INTERACTIONS
 void readBinFile();
@@ -53,4 +52,8 @@ int signUp(char* username, char* password, char* retypePassword);
 bool login(char* username, char* password);
 void logout();
 void saveGame(int saveSlot);
-bool loadGame(int saveSlot);
+void loadGame(int saveSlot);
+void updateRecords(Record record);
+
+// LEADERBOARD
+void updateLeaderboard();
