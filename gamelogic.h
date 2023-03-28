@@ -6,6 +6,10 @@ vector<pair<int, int>> path;
 void initializeBoard();
 void deleteBoard();
 void shuffle();
+void shiftColUp(int col);
+void shiftColDown(int col);
+void shiftRowLeft(int row);
+void shiftRowRight(int row);
 
 //moves related
 bool isLegalMove(pair<int, int> p1, pair<int, int> p2);

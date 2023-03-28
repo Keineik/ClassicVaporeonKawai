@@ -7,7 +7,6 @@ void initializeBoard() {
         board[i] = new int [N+2];
 
     // generate board values
-    int countPoke[256] = {};
     // upper border
     for (int i = 0; i <= N+1; i++)
         board[0][i] = blankspace;
@@ -26,7 +25,7 @@ void initializeBoard() {
     // lower border
     for (int i = 0; i <= N+1; i++)
         board[M+1][i] = blankspace;
-
+    
     shuffle();
 }
 void deleteBoard() {
@@ -52,6 +51,26 @@ void shuffle() {
                     }
                 }
             }
+}
+void shiftColUp(int col) {
+    for (int i = 1; i <= M; i++)
+        if (board[i][col] == blankspace) 
+            swap(board[i][col], board[i + 1][col]);
+}
+void shiftColDown(int col) {
+    for (int i = M; i >= 1; i--)
+        if (board[i][col] == blankspace)
+            swap(board[i][col], board[i - 1][col]);
+}
+void shiftRowLeft(int row) {
+    for (int i = 1; i <= N; i++) 
+        if (board[row][i] == blankspace)
+            swap(board[row][i], board[row][i + 1]);
+}
+void shiftRowRight(int row) {
+    for (int i = N; i >= 1; i--)
+        if (board[row][i] == blankspace)
+            swap(board[row][i], board[row][i - 1]);
 }
 
 bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
