@@ -12,6 +12,8 @@ void readBinFile() {
         int file_size = (int) fs.tellg();
         fs.seekg(0, ios::beg);
 
+        char tempBoard[999];
+
         while(fs.tellg() < file_size) {
             savefile tempsf;
             char temp[50];
@@ -24,11 +26,19 @@ void readBinFile() {
             fs.read(temp, PASSSIZE);
             xorCstr(tempsf.password, temp, tempsf.mask, PASSSIZE);
 
+            fs.read(temp, 3); // get 3 because of struct alignment
+
             for (int i = 0; i < 5; i++)
                 fs.read((char*)&tempsf.record[i], sizeof(Record));
 
-            for (int i = 0; i < 5; i++)
-                fs.read((char*)&tempsf.state[i], sizeof(State));
+            for (int i = 0; i < 5; i++) {
+                fs.read((char*) &tempsf.state[i], 16); // get p, q, p_, q_
+                fs.read(tempBoard, BOARDSIZE);
+                xorCstr(tempsf.state[i].board, tempBoard, tempsf.mask, strlen(tempBoard));
+                fs.read(temp, 1); // get 1 because of struct alignment
+                fs.read(tempsf.state[i].file_background, 100);
+                fs.read(tempsf.state[i].padding, PADDING);
+            }
 
             saves.push_back(tempsf);
             listOfUsername.insert(tempsf.name);
@@ -50,8 +60,10 @@ void writeBinFile() {
     fstream fs;
     fs.open("savefile.bin", ios::out | ios::binary);
 
+    char blank[4] = {0, 0, 0, 0}, tempBoard[999];
+
     for (auto tempsf: saves) {
-        char temp[50];
+        char temp[50], blank[2] = "\0";
         fs.write(&tempsf.mask, 1);
 
         xorCstr(temp, tempsf.name, tempsf.mask, NAMESIZE);
@@ -60,11 +72,19 @@ void writeBinFile() {
         xorCstr(temp, tempsf.password, tempsf.mask, PASSSIZE);
         fs.write(temp, PASSSIZE);
 
+        fs.write(blank, 3); // write 3 because of struct alignment
+
         for (int i = 0; i < 5; i++)
             fs.write((char*)&tempsf.record[i], sizeof(Record));
 
-        for (int i = 0; i < 5; i++)
-            fs.write((char*)&tempsf.state[i], sizeof(State));
+        for (int i = 0; i < 5; i++) {
+            fs.write((char*) &tempsf.state[i], 16); // print p, q, p_, q_
+            xorCstr(tempBoard, tempsf.state[i].board, tempsf.mask, strlen(tempsf.state[i].board));
+            fs.write(tempBoard, BOARDSIZE);
+            fs.write(blank, 1); // print 1 because of struct alignment
+            fs.write(tempsf.state[i].file_background, 100);
+            fs.write(tempsf.state[i].padding, PADDING);
+        }
     }
     fs.close();
 }
@@ -164,6 +184,12 @@ void loadGame(int saveSlot) {
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             board[i + 1][j + 1] = currentSave.state[saveSlot].board[i*N + j];
+    
+    // redraw border
+    for (int i = 0; i <= N + 1; i++) 
+        board[M + 1][i] = blankspace;
+    for (int i = 0; i <= M + 1; i++)
+        board[i][N + 1] = blankspace;
 }
 
 // int main () {

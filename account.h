@@ -11,7 +11,7 @@ struct State{ //Representing a board state
     int p_, q_; // Current cursor position
     char board[BOARDSIZE]; // Current board state
     char file_background[URLSIZE]; // Link to background file. This variable’s value is NULL if there is no current background
-    // 500 byte NULL
+    char padding[PADDING];// 500 byte NULL
 };
 struct Date{
     int dd, mm, yy;
@@ -19,7 +19,7 @@ struct Date{
 struct Record{
     Date date; // Date of completed record
     int points; // points achieved
-    // 500 byte NULL
+    char padding[PADDING];// 500 byte NULL
 };
 struct savefile{
     char mask; // You are required to transfer all char-type variables by performing xor each with the mask-variable, bit-by-bit.
