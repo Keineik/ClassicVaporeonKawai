@@ -157,6 +157,7 @@ void saveGame(int saveSlot) {
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             currentSave.state[saveSlot].board[i*N + j] = board[i + 1][j + 1];
+    currentSave.state[saveSlot].board[M*N + 1] = '\0';
 
     // save to saves data
     for (auto &user: saves) {
@@ -181,15 +182,10 @@ void loadGame(int saveSlot) {
 
     M = currentSave.state[saveSlot].p;
     N = currentSave.state[saveSlot].q;
+    initializeBoard();
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             board[i + 1][j + 1] = currentSave.state[saveSlot].board[i*N + j];
-    
-    // redraw border
-    for (int i = 0; i <= N + 1; i++) 
-        board[M + 1][i] = blankspace;
-    for (int i = 0; i <= M + 1; i++)
-        board[i][N + 1] = blankspace;
 }
 
 // int main () {
