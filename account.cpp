@@ -182,6 +182,7 @@ void loadGame(int saveSlot) {
 
     M = currentSave.state[saveSlot].p;
     N = currentSave.state[saveSlot].q;
+    deleteBoard();
     initializeBoard();
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
