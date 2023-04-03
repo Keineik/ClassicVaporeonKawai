@@ -53,7 +53,6 @@ void xorCstr(char* dcstr, char* cstr, char mask, int size) {
     for (i = 0; cstr[i] != '\0'; i++) {
         dcstr[i] = cstr[i] ^ mask;
     }
-    dcstr[i] = '\0';
 }
 
 void writeBinFile() {
@@ -180,9 +179,9 @@ void loadGame(int saveSlot) {
         }
     }
 
+    deleteBoard();
     M = currentSave.state[saveSlot].p;
     N = currentSave.state[saveSlot].q;
-    deleteBoard();
     initializeBoard();
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
