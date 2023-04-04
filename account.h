@@ -10,8 +10,9 @@ struct State{ //Representing a board state
     int p, q; // Size of the board game
     int p_, q_; // Current cursor position
     char board[BOARDSIZE]; // Current board state
-    char file_background[URLSIZE]; // Link to background file. This variable’s value is NULL if there is no current background
-    char padding[PADDING];// 500 byte NULL
+    char file_background[URLSIZE] = {}; // Link to background file. This variable’s value is NULL if there is no current background
+    char padding[PADDING] = {};// 500 byte NULL
+    char trash[1] = {}; // self added trash
 };
 struct Date{
     int dd, mm, yy;
@@ -19,12 +20,13 @@ struct Date{
 struct Record{
     Date date; // Date of completed record
     int points; // points achieved
-    char padding[PADDING];// 500 byte NULL
+    char padding[PADDING] = {};// 500 byte NULL
 };
 struct savefile{
     char mask; // You are required to transfer all char-type variables by performing xor each with the mask-variable, bit-by-bit.
     char name[NAMESIZE]; // username
     char password[PASSSIZE]; // password
+    char trash[3] = {}; // self added trash
     // 500 byte NULL
     Record record[5]; // List of sorted best records
     State state[5]; // List of save state
@@ -43,7 +45,7 @@ vector<topPlayer> leaderboard(5, {"\0", 0});
 // BINARY FILE INTERACTIONS
 void readBinFile();
 // xor cstr with mask and asign that to dcstr
-void xorCstr(char* dcstr, char* cstr, char mask, int size);
+void xorCstr(char* cstr, char mask);
 void writeBinFile();
 
 // ACCOUNT INTERACTIONS
