@@ -105,9 +105,6 @@ void logout() {
         currentSave.state[i].board[0] = '\0';
         currentSave.state[i].file_background[0] = '\0';
     }
-    deleteBoard();
-    M = 8, N = 16;
-    initializeBoard();
 }
 
 void saveGame(int saveSlot) {
@@ -118,10 +115,21 @@ void saveGame(int saveSlot) {
             currentSave.state[saveSlot].board[i*N + j] = board[i + 1][j + 1];
     currentSave.state[saveSlot].board[M*N] = '\0';
 
+    // update record to currentSave
+    sort(currentSave.record, currentSave.record + 4, sortingPriority);
+    if (currentSave.record[0].points < score) {
+        // get dd/mm/yyyy
+        // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        currentSave.record[0] = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year, score};
+    }
+    sort(currentSave.record, currentSave.record + 4, sortingPriority);
+
     // save to saves data
     for (auto &user: saves) {
         if (strcmp(user.name, currentSave.name) == 0) {
-            user.state[saveSlot] = currentSave.state[saveSlot];
+            user = currentSave;
         }
     }
 }

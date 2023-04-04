@@ -42,6 +42,13 @@ struct topPlayer {
 };
 vector<topPlayer> leaderboard(5, {"\0", 0});
 
+bool sortingPriority(Record rec1, Record rec2) {
+    if (rec1.points != rec2.points) return rec1.points > rec2.points;
+    else if (rec1.date.yy != rec2.date.yy) return rec1.date.yy > rec2.date.yy;
+    else if (rec1.date.mm != rec2.date.mm) return rec1.date.mm > rec2.date.mm;
+    return rec1.date.dd > rec2.date.dd;
+}
+
 // BINARY FILE INTERACTIONS
 void readBinFile();
 // xor cstr with mask and asign that to dcstr

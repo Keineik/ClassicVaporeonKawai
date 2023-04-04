@@ -28,45 +28,56 @@ void initializeBoard() {
     
     shuffle();
 }
+
 void deleteBoard() {
     for (int i = 0; i <= M+1; i++)
         delete [] board[i];
     delete [] board;
 }
-void shuffle() {
-    // get seeds in nanoseconds
-    struct timespec ts;
-    clock_gettime(CLOCK_MONOTONIC, &ts);
-    srand((time_t)ts.tv_nsec);
 
+void shuffle() {
+    // random algo
+    mt19937 mt{ static_cast<unsigned int>(
+	    chrono::steady_clock::now().time_since_epoch().count()
+	    ) };
+    // uniform_int_distribution ran{1, 6};
+
+    vector<int> allData;
+    for (int i = 1; i <= M; i++)
+        for (int j = 1; j <= N; j++)
+            if (board[i][j] != blankspace)
+                allData.push_back(board[i][j]);
+
+    // put the randomize data back
     for (int i = 1; i <= M; i++)
         for (int j = 1; j <= N; j++)
             if (board[i][j] != blankspace) {
-                while (true) {
-                    int u = rand()%M + 1;
-                    int v = rand()%N + 1;
-                    if (board[u][v] != blankspace) {
-                        swap(board[i][j], board[u][v]);
-                        break;
-                    }
-                }
+                uniform_int_distribution<int> ran{0, (int) allData.size() - 1};
+                int rNum = ran(mt);
+                board[i][j] = allData[rNum];
+                allData.erase(allData.begin() + rNum);
             }
+
 }
+
 void shiftColUp(int col) {
     for (int i = 1; i <= M; i++)
         if (board[i][col] == blankspace) 
             swap(board[i][col], board[i + 1][col]);
 }
+
 void shiftColDown(int col) {
     for (int i = M; i >= 1; i--)
         if (board[i][col] == blankspace)
             swap(board[i][col], board[i - 1][col]);
 }
+
 void shiftRowLeft(int row) {
     for (int i = 1; i <= N; i++) 
         if (board[row][i] == blankspace)
             swap(board[row][i], board[row][i + 1]);
 }
+
 void shiftRowRight(int row) {
     for (int i = N; i >= 1; i--)
         if (board[row][i] == blankspace)
@@ -97,6 +108,7 @@ bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
 
     return isLegal;
 }
+
 bool checkLine(pair<int, int> p1, pair<int, int> p2) {
     //if line is horizontal
     if (p1.first == p2.first) {
@@ -117,6 +129,7 @@ bool checkLine(pair<int, int> p1, pair<int, int> p2) {
     path.insert(path.end(), {p1, p2});
     return true;
 }
+
 bool checkSmallRect(pair<int, int> p1, pair<int, int> p2) {
     //check legal if middle path is a horizontal line
     if (p1.first > p2.first) swap(p1, p2);
@@ -150,6 +163,7 @@ bool checkSmallRect(pair<int, int> p1, pair<int, int> p2) {
     }
     return false;
 }
+
 bool checkBigRect(pair<int, int> p1, pair<int, int> p2) {
     //check big rect Ox+
     if (p1.second > p2.second) swap(p1, p2);
@@ -195,6 +209,7 @@ bool checkBigRect(pair<int, int> p1, pair<int, int> p2) {
     }
     return false;
 }
+
 pair<pair<int, int>, pair<int, int>> moveSuggestion() {
     for (int i = 1; i <= M; i++) {
         for (int j = 1; j <= N; j++) {
@@ -224,6 +239,7 @@ bool isPlayable() {
     }
     return false;
 }
+
 bool isWin() {
     for (int i = 1; i <= M; i++)
         for (int j = 1; j <= N; j++)
