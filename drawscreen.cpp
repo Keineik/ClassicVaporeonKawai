@@ -41,20 +41,10 @@ void TextColor(int x)
 }
 
 //Set color for cout
-void SetColor(WORD color)
+void SetColor(int x)
 {
-    HANDLE hConsoleOutput;
-    hConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    CONSOLE_SCREEN_BUFFER_INFO screen_buffer_info;
-    GetConsoleScreenBufferInfo(hConsoleOutput, &screen_buffer_info);
-
-    WORD wAttributes = screen_buffer_info.wAttributes;
-    color &= 0x000f;
-    wAttributes &= 0xfff0;
-    wAttributes |= color;
-
-    SetConsoleTextAttribute(hConsoleOutput, wAttributes);
+    HANDLE h= GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, x);
 }
 
 // Clear Canvas
@@ -65,6 +55,14 @@ void clearCanvas(int x, int y, int width, int height){
         gotoxy(i,j);
         cout <<" ";
     }
+}
+
+void exposeBackground(int x, int y, int width, int height, char **background, int backgroundx, int backgroundy){
+    for (int i = x; i <=  x+width; i++)
+        for (int j = y; j <= y+height; j++){
+            gotoxy(i,j);
+            cout <<background[j-backgroundy][i-backgroundx];
+        }
 }
 
 void clearScreen(){
@@ -103,7 +101,7 @@ void clearScreen(){
     SetConsoleCursorPosition( hStdOut, homeCoords );
 }
 
-// Draw box
+// Draw solid box
 void drawBox(int x, int y, int w, int h, int color, string s){
 
     SetColor(color);
@@ -120,10 +118,40 @@ void drawBox(int x, int y, int w, int h, int color, string s){
         gotoxy(x+w,i);
         cout << char(186);
     }
-    if (s != " "){
-        gotoxy(x+ 2, y+h/2); cout << s;
 
+    for (int i = x+1 ; i < x+w; i++){
+        for (int j = y+1; j < y+h; j++){
+            gotoxy(i,j);
+            cout <<  " ";
+        }
     }
+    gotoxy(x+2, y+h/2); cout << s;
+
+
+    gotoxy(x,y); cout << char(201);
+    gotoxy(x+w,y); cout << char(187);
+    gotoxy(x,y+h); cout << char(200);
+    gotoxy(x+w,y+h); cout << char(188);
+
+}
+// Draw empty box
+void drawBoxOnly(int x, int y, int w, int h, int color, string s){
+
+    SetColor(color);
+
+    for (int i = x; i<= x+w; i++){
+        gotoxy(i,y);
+        cout <<char(205);
+        gotoxy(i, y+h);
+        cout << char(205);
+    }
+    for (int i = y; i <= y + h; i++){
+        gotoxy(x,i);
+        cout << char(186);
+        gotoxy(x+w,i);
+        cout << char(186);
+    }
+    gotoxy(x+2, y+h/2); cout << s;
     gotoxy(x,y); cout << char(201);
     gotoxy(x+w,y); cout << char(187);
     gotoxy(x,y+h); cout << char(200);
@@ -133,29 +161,31 @@ void drawBox(int x, int y, int w, int h, int color, string s){
 
 void drawCell(int x, int y, int w, int h, int color, char c){
         if(c != blankspace){
-                SetColor(color);
-        for (int i = x; i<= x+w; i++){
-            gotoxy(i,y);
-            cout <<char(196);
-            gotoxy(i, y+h);
-            cout << char(196);
+            SetColor(color);
+            for (int i = x; i<= x+w; i++){
+                gotoxy(i,y);
+                cout <<char(196);
+                gotoxy(i, y+h);
+                cout << char(196);
+            }
+            for (int i = y; i < y + h; i++){
+                gotoxy(x,i);
+                cout << char(179);
+                gotoxy(x+w,i);
+                cout << char(179);
+            }
+            for (int i = x+1 ; i < x+w; i++){
+                for (int j = y+1; j < y+h; j++){
+                    gotoxy(i,j);
+                    cout <<  " ";
+                }
+            }
+            gotoxy(x+ 2, y+h/2); cout << c;
+            gotoxy(x,y); cout << char(218);
+            gotoxy(x+w,y); cout << char(191);
+            gotoxy(x,y+h); cout << char(192);
+            gotoxy(x+w,y+h); cout << char(217);
         }
-        for (int i = y; i < y + h; i++){
-            gotoxy(x,i);
-            cout << char(179);
-            gotoxy(x+w,i);
-            cout << char(179);
-        }
-        gotoxy(x+ 2, y+h/2); cout << c;
-        gotoxy(x,y); cout << char(218);
-        gotoxy(x+w,y); cout << char(191);
-        gotoxy(x,y+h); cout << char(192);
-        gotoxy(x+w,y+h); cout << char(217);
-
-        }
-        else
-            clearCanvas(x,y,w,h);
-
 }
 // Draw menu
 
@@ -170,39 +200,13 @@ void drawCell(int x, int y, int w, int h, int color, char c){
     Credit: 3
     Quit: 4
 */
-void drawMainMenu(int width,int height,int isSelecting){
-    string s[5] = {"PLAY","HOW TO PLAY","HIGH SCORE","CREDIT", "QUIT"};
-    int x = (width - 20) / 2;
-    int y = (height - 4*3) / 2;
-    int color = 6,selectcolor = 9;
-    for (int i = 0; i<5; i++){
-        if (isSelecting==i)
-            drawBox(x,y +(i * 2 + i) , 20, 2,selectcolor, s[i]);
-        else
-            drawBox(x,y +(i * 2 + i) , 20, 2,color, s[i]);
 
-    }
-}
-
-void drawLoginMenu(int width, int height, int isSelecting){
-
-    string s[3] = {"Log in", "Sign up", "Play as guest" };
-    int color = 6,selectcolor = 9;
-    int x = ( width - 20) / 2;
-    int y = (height - 3*3) / 2;
-    for (int i = 0; i<3; i++){
-        if (isSelecting==i)
-            drawBox(x,y +(i * 2 + i) , 20, 2,selectcolor, s[i]);
-        else
-            drawBox(x,y +(i * 2 + i) , 20, 2,color, s[i]);
-    }
-}
 // Draw Login/Signup Form
 
-void drawLoginForm(int width, int height, char username[], char password[]){
+void drawLoginForm(){
     int x, y;
-    x = (width - 60) / 2;
-    y = (height - (2*4)) / 2;
+    x = offsetx+(width - 60) / 2;
+    y = offsety+ (height - (2*4)) / 2;
     char c; int countchar = 0;
     gotoxy(x,y);
     SetColor(6);
@@ -233,7 +237,6 @@ void drawLoginForm(int width, int height, char username[], char password[]){
         }
 
     }
-    gotoxy(0,42); cout << username;
     countchar = 0;
     gotoxy(x+1,(y+6)+(2/2));
     while(c = _getch()){
@@ -257,17 +260,16 @@ void drawLoginForm(int width, int height, char username[], char password[]){
             }
 
     }
-    gotoxy(0,42); cout << password;
     ShowConsoleCursor(false);
 }
 
-void drawSignupForm(int width, int height, char username[], char password[]){
+void drawSignupForm(){
     int x, y;
     int countchar = 0;
     char rewritepassword[60];
     char c;
-    x = (width - 60) / 2;
-    y = (height - (2*6)) / 2;
+    x = offsetx + (width - 60) / 2;
+    y = offsety + (height - (2*6)) / 2;
     gotoxy(x,y);
     SetColor(6);
     cout << "USERNAME (No longer than 15 chars)";
@@ -301,7 +303,6 @@ void drawSignupForm(int width, int height, char username[], char password[]){
 
     }
 
-    gotoxy(0,42); cout << username;
     countchar = 0;
     gotoxy(x+1,(y+5)+(2/2));
     while(c = _getch()){
@@ -325,7 +326,6 @@ void drawSignupForm(int width, int height, char username[], char password[]){
             }
 
     }
-    gotoxy(0,42); cout << password;
     countchar = 0;
     gotoxy(x+1,(y+9)+(2/2));
     while(c = _getch()){
@@ -343,13 +343,15 @@ void drawSignupForm(int width, int height, char username[], char password[]){
         }
         else if (c!= 8 && countchar < 49 && countchar >= 0 ){
             cout << c;
-            rewritepassword[countchar] = c;
+            retypepassword[countchar] = c;
             countchar++;
         }
 
     }
-    gotoxy(0,42); cout << rewritepassword;
+
     ShowConsoleCursor(false);
+
+
 }
 
 
@@ -369,12 +371,7 @@ void drawHow2Play(){
 }
 // Draw In-game HUD
 
-void drawHUD(int width, int height){
-    drawBox(0,height+1,width / 2 - 1, 4, 6, "Player: Username");
-    drawBox(width/2+1,height+1,width /2 - 1,4,6, "Score: XXX");
-    drawBox(width+1,0,15,4,6,"LEVEL: X");
-    drawBox(width+1,5,15,4,6,"TIMER");
-}
+
 
 // Draw play board
 int calculateCellPosX(int j, int w, int h, int boardposx){
@@ -382,27 +379,27 @@ int calculateCellPosX(int j, int w, int h, int boardposx){
 }
 
 int calculateCellPosY(int i, int w, int h, int boardposy){
-    return (boardposx + i*h + i);
+    return (boardposy + i*h + i);
 }
 
-int calculatBoardPosX(int width,int w,int N){
-    return (width  - ((N+2)*(w+1)))/2 ;
-
-}
-
-int calculatBoardPosY(int height,int h, int M){
-    return (height -((M+2)*(h+1)))/2;
+int calculateBoardPosX(){
+    return offsetx + (width  - ((N+2)*(w+1)))/2 ;
 
 }
 
-void printBoard(int width, int height,pair<int, int> p1, pair<int,int> p2,int boardposx,int boardposy) {
+int calculateBoardPosY(){
+    return offsety + (height -((M+2)*(h+1)))/2;
+
+}
+
+void printBoard(pair<int, int> p1, pair<int,int> p2,int boardposx,int boardposy) {
 
     for (int i = 0; i <= M+1; i++) {
         for (int j = 0; j <=  N+1; j++){
             if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 4 , board[i][j]);
-            else if (chosex == i && chosey == j)
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 1 , board[i][j]);
+                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
+            else if (choosing.first == i && choosing.second == j)
+                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
             else
                 drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 6 , board[i][j]);
 
@@ -424,6 +421,20 @@ void drawColumn(int starty, int endy, int posx){
     for (int i =  starty; i <= endy; i++){
                 gotoxy(posx,i);
                 cout << char(186);
+            }
+}
+
+void eraseBar(char **background, int backgroundx, int backgroundy, int startx, int endx, int posy, int w, int h){
+    if (startx > endx) swap(startx,endx);
+    for (int i =  startx; i <= endx; i+=w){
+                exposeBackground(i - w/2 ,posy - h/2, w, h,background,backgroundx,backgroundy);
+            }
+}
+
+void eraseColumn(char **background, int backgroundx, int backgroundy, int starty, int endy, int posx, int w, int h){
+    if (starty > endy) swap(starty,endy);
+    for (int i =  starty; i <= endy; i+=h){
+                exposeBackground(posx - w/2,i - h/2,w,h,background,backgroundx,backgroundy);
             }
 }
 void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
@@ -682,7 +693,195 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
     }
 }
 
+void clearVfx(pair <int,int> p1, pair <int,int> p2, vector<pair<int,int>> path, int backgroundx, int backgroundy){
+    SetColor(7);
+    exposeBackground(calculateCellPosX(p1.second,w,h,boardposx),calculateCellPosY(p1.first,w,h,boardposy), w, h,background,backgroundx,backgroundy);
+    exposeBackground(calculateCellPosX(p2.second,w,h,boardposx),calculateCellPosY(p2.first,w,h,boardposy), w, h,background,backgroundx,backgroundy);
+    int point = size(path);
+    for (int i = 0; i < point; i++)
+        exposeBackground(calculateCellPosX(path[i].second,w,h,boardposx),calculateCellPosY(path[i].first,w,h,boardposy), w, h,background,backgroundx,backgroundy);
+    if (point == 2){
+        if (path[0].second != path[1].second){
 
+            int startx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
+            int endx = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+            int posy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+            eraseBar(background,backgroundx,backgroundy,startx, endx, posy,w,h);
+
+        }
+        else
+        {
+
+            int starty = calculateCellPosY(path[0].first,w,h,boardposx) + h/2;
+            int endy = calculateCellPosY(path[1].first,w,h,boardposx) + h/2;
+            int posx = calculateCellPosX(path[0].second,w,h,boardposy) + w/2;
+            eraseColumn(background,backgroundx,backgroundy, starty,endy,posx,w,h);
+
+        }
+
+    }
+
+    if (point == 3){
+        if (path[2].second > path[0].second) swap(path[2], path[0]);
+        if(path[2].first == path[1].first){
+            int startx = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+            int middlex = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+            int middley = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+            int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+            eraseBar(background,backgroundx,backgroundy, startx,middlex,middley,w,h);
+            eraseColumn(background,backgroundx,backgroundy, middley,endy,middlex,w,h);
+
+        }
+        else
+        {
+            int starty = calculateCellPosY(path[2].first,w,h,boardposx) + h/2;
+            int middlex = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+            int middley = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+            int endx = calculateCellPosX(path[0].second,w,h,boardposy) + w/2;
+            eraseColumn(background,backgroundx,backgroundy, starty,middley,middlex,w,h);
+            eraseBar(background,backgroundx,backgroundy, middlex,endx,middley,w,h);
+        }
+
+    }
+
+    if (point == 4){
+
+        if (path[1].first ==  path[2].first){
+            if (path[0].first < path[1].first && path[3].first < path[2].first){
+                //3   0
+                //|   |
+                //|   |
+                //2---1
+
+                int starty = calculateCellPosY(path[3].first,w,h,boardposy) + h/2;
+                int middley = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middlex2 = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+                int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+                eraseColumn(background,backgroundx,backgroundy, starty,middley,middlex2,w,h);
+                eraseBar(background,backgroundx,backgroundy, middlex1,middlex2,middley,w,h);
+                eraseColumn(background,backgroundx,backgroundy, endy,middley,middlex1,w,h);
+
+            }
+            if (path[0].first > path[1].first && path[3].first > path[2].first){
+                //2---1
+                //|   |
+                //|   |
+                //3   0
+
+                int starty = calculateCellPosY(path[3].first,w,h,boardposy) + h/2;
+                int middley = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middlex2 = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+                int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+                eraseColumn(background,backgroundx,backgroundy, middley,starty,middlex2,w,h);
+                eraseBar(background,backgroundx,backgroundy, middlex2,middlex1,middley,w,h);
+                eraseColumn(background,backgroundx,backgroundy, middley,endy,middlex1,w,h);
+            }
+            if (path[0].first < path[1].first && path[3].first > path[2].first){
+                //    0
+                //    |
+                //2---1
+                //|
+                //3
+
+                int starty = calculateCellPosY(path[3].first,w,h,boardposy) + h/2;
+                int middley = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middlex2 = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+                int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+                eraseColumn(background,backgroundx,backgroundy, middley,starty,middlex2,w,h);
+                eraseBar(background,backgroundx,backgroundy, middlex2,middlex1,middley,w,h);
+                eraseColumn(background,backgroundx,backgroundy, endy,middley,middlex1,w,h);
+
+            }
+            if (path[0].first > path[1].first && path[3].first < path[2].first){
+                //3
+                //|
+                //2---1
+                //    |
+                //    0
+
+                int starty = calculateCellPosY(path[3].first,w,h,boardposy) + h/2;
+                int middley = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middlex2 = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
+                int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+                eraseColumn(background,backgroundx,backgroundy,starty,middley,middlex2,w,h);
+                eraseBar(background,backgroundx,backgroundy, middlex2,middlex1,middley,w,h);
+                eraseColumn(background,backgroundx,backgroundy,middley,endy,middlex1,w,h);
+
+            }
+
+        }
+        else{
+            if (path[0].second < path[1].second && path[3].second < path[2].second){
+                /*
+                  3--2
+                     |
+                  0--1
+                */
+                int startx = calculateCellPosX(path[3].second,w,h,boardposx) + w/2;
+                int middlex = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middley2 = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middley1 = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+                int endx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
+                eraseBar(background,backgroundx,backgroundy,startx,middlex,middley2,w,h);
+                eraseColumn(background,backgroundx,backgroundy,middley2,middley1,middlex,w,h);
+                eraseBar(background,backgroundx,backgroundy,endx,middlex,middley1,w,h);
+            }
+            if (path[0].second > path[1].second && path[3].second > path[2].second){
+
+
+                /*
+                  2--3
+                  |
+                  1--0
+                */
+                int startx = calculateCellPosX(path[3].second,w,h,boardposx) + w/2;
+                int middlex = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middley2 = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middley1 = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+                int endx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
+                eraseBar(background,backgroundx,backgroundy,middlex,startx,middley2,w,h);
+                eraseColumn(background,backgroundx,backgroundy,middley1,middley2,middlex,w,h);
+                eraseBar(background,backgroundx,backgroundy,middlex,endx,middley1,w,h);
+
+            }
+            if (path[0].second > path[1].second && path[3].second < path[2].second){
+                /*
+                  3--2
+                     |
+                     1--0
+                */
+                int startx = calculateCellPosX(path[3].second,w,h,boardposx) + w/2;
+                int middlex = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middley2 = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middley1 = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+                int endx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
+                eraseBar(background,backgroundx,backgroundy,startx,middlex,middley2,w,h);
+                eraseColumn(background,backgroundx,backgroundy,middley2,middley1,middlex,w,h);
+                eraseBar(background,backgroundx,backgroundy,middlex,endx,middley1,w,h);
+            }
+            if (path[0].second < path[1].second && path[3].second > path[2].second){
+                /*
+                     2--3
+                     |
+                  0--1
+                */
+                int startx = calculateCellPosX(path[3].second,w,h,boardposx) + w/2;
+                int middlex = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
+                int middley2 = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
+                int middley1 = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+                int endx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
+                eraseBar(background,backgroundx,backgroundy,middlex,startx,middley2,w,h);
+                eraseColumn(background,backgroundx,backgroundy,middley2,middley1,middlex,w,h);
+                eraseBar(background,backgroundx,backgroundy,endx,middlex,middley1,w,h);
+            }
+         }
+
+    }
+}
 
 //Hide show cursor
 void ShowConsoleCursor(bool showFlag)
@@ -698,64 +897,204 @@ void ShowConsoleCursor(bool showFlag)
 
 
 //Draw Game Title
-void drawImage(int x, int y, int patterlen, string imagefile){
-    char c[patterlen];
-    int line = 0;
+void drawImage(int x, int y, string imagefile){
     ifstream ifs;
     ifs.open(imagefile);
+    int imagew, imageh;
+    ifs >> imagew >> imageh;
+    char image[imageh][imagew];
     int colors = 0;
     ifs >> colors;
     char pattern[colors-1];
     int color[colors];
-    int i = 0;
+    int i = 0, j = 0;
     for (i = 0; i < colors; i++)
         ifs >> color[i];
     for (i = 0; i < colors-1; i++)
         ifs >> pattern[i];
     if (ifs.is_open()){
-        pattern[i];
-    gotoxy(x,y);
-    while (!ifs.eof()){
-        ifs.getline(c,patterlen,'\n');
-        i = 0;
-        while (c[i] != '\0'){
-            if (c[i] != ' '){
-                if (colors == 1)
-                    if (c[i] == pattern[0])
-                        SetColor(color[0]);
-                    else
-                        SetColor(7);
-                else if (colors == 2){
-                    if (c[i] == pattern[0])
-                        SetColor(color[0]);
-                    else
-                        SetColor(color[1]);
-                }
-                else if (colors == 3){
-                    if (c[i] == pattern[0])
-                        SetColor(color[0]);
-                    else if (c[i] == pattern[1])
-                        SetColor(color[1]);
-                    else
-                        SetColor(color[2]);
+        gotoxy(offsetx+x,offsety+y);
+        for (i = 0; i < imageh; i++){
+            ifs.getline(image[i],imagew+5,'\n');
+            j = 0;
+            while (image[i][j] != '\0'){
+                if (image[i][j] != ' '){
+                    if (colors == 1)
+                        if (image[i][j] == pattern[0])
+                            SetColor(color[0]);
+                        else
+                            SetColor(7);
+                    else if (colors == 2){
+                        if (image[i][j] == pattern[0])
+                            SetColor(color[0]);
+                        else
+                            SetColor(color[1]);
                     }
-                else if (colors == 4){
-                    if (c[i] == pattern[0])
-                        SetColor(color[0]);
-                    else if (c[i] == pattern[1])
-                        SetColor(color[1]);
-                    else if (c[i] == pattern[2])
-                        SetColor(color[2]);
-                    else
-                        SetColor(color[3]);
+                    else if (colors == 3){
+                        if (image[i][j] == pattern[0])
+                            SetColor(color[0]);
+                        else if (image[i][j] == pattern[1])
+                            SetColor(color[1]);
+                        else
+                            SetColor(color[2]);
+                        }
+                    else if (colors == 4){
+                        if (image[i][j] == pattern[0])
+                            SetColor(color[0]);
+                        else if (image[i][j] == pattern[1])
+                            SetColor(color[1]);
+                        else if (image[i][j] == pattern[2])
+                            SetColor(color[2]);
+                        else
+                            SetColor(color[3]);
+                    }
+                    gotoxy(x+j,y+i);
+                    cout << image[i][j];
                 }
-                gotoxy(x+i,y+line);
-                cout << c[i];
+                j++;
             }
-            i++;
         }
-        line++;
-    }
     }
     ifs.close();
+}
+
+void initializeBackground(char **&background,int &backw, int &backh, string filename){
+    ifstream ifs;
+    ifs.open(filename);
+    ifs >> backw >> backh;
+    background = new char *[backh];
+    for (int i = 0; i< backh; i++)
+        background[i] = new char[backw];
+
+    for (int i = 0; i < backh; i++)
+        ifs.getline(background[i], backw+1, '\n');
+    ifs.close();
+}
+
+void deleteBackgroundInfo(char **&background, int &backw, int &backh){
+    for (int i = 0; i < backh; i++)
+        delete [] background[i];
+    delete [] background;
+    backh = 0;
+    backw = 0;
+}
+void drawBackground(char **background,int backw, int backh){
+    SetColor(7);
+    for (int i = 0; i < backh;i++){
+        gotoxy(offsetx + (width-backw) / 2, offsety + (height - backh) / 2 + i);
+        cout << background[i];
+    }
+
+}
+
+// Draw Game status on the screen when first enter play()
+void drawHUD(){
+    SetColor(15);
+    gotoxy(offsetx + 10, offsety + height + 3); cout << "Score: " << right << score;
+    gotoxy(offsetx + 10, offsety + height + 5); cout << "Time left: " << right << timeRemain;
+    gotoxy(offsetx + 10, offsety + height + 7); cout << "Streak: " << right << streak;}
+
+
+// display time and Game status during gameplay
+void displayTimeAndStatus(){
+    miliseconds -= tick;
+    // Sleep for 40 milisecond;
+    if (miliseconds == 0){
+        if (streakTimeRemain > 0)
+            streakTimeRemain --;
+        timeRemain --;
+        SetColor(15);
+        gotoxy(offsetx + 10,offsety + height + 3); cout <<"Score: "     << setw(7) << right << score;
+        gotoxy(offsetx + 10,offsety + height + 5); cout << "Time left: " << setw(3) << right << timeRemain;
+        gotoxy(offsetx + 10,offsety + height + 7); cout << "Streak: "    << setw(6) << right << streak;
+        if (streak > 0){
+            gotoxy(offsetx + 25 , offsety + height + 7); cout << "Streak resets after: " << setw(2)<< right << streakTimeRemain;
+        }
+        else{
+            gotoxy(offsetx + 25 , offsety + height + 7); cout << "                                       ";
+
+        }
+        if (score >= 200) {
+            gotoxy(offsetx + 10 , offsety + height + 9); cout << "Press H(Hint) for 200 scores";
+        }
+        else
+        {
+            gotoxy(offsetx + 10 , offsety +  height + 9); cout << "                             ";
+        }
+        miliseconds = 1000;
+    }
+}
+
+bool validateColandRow(int M, int N){
+    return (M*N != 0 && M*N %2 == 0);
+}
+
+void drawCustomnizeMenu(){
+    int minM, maxM, selectingM, minN, maxN, selectingN, menuOption, menuSelecting;
+    selectingM = selectingN = minN = minM = 2;
+    maxM = 10; maxN = 16;
+    M = N = 0;
+    menuOption = 0;
+    menuSelecting = 1;
+    int x = offsetx + (width - 60) / 2;
+    int y = offsety + (height - 4*(2+1)) / 2;
+    while (true){
+        drawBoxOnly(x,y,60,2,(menuSelecting == 1 ? 15: 6),"NUMBERS OF ROWS: "); gotoxy(x+20,y+1); cout << (selectingM > minM ? "< ": "  ") << setw(2) << right << selectingM << (selectingM < maxM ? " >": "  ");
+        drawBoxOnly(x,y + 3 ,60,2,(menuSelecting == 2 ? 15: 6),"NUMBERS OF COLS: "); gotoxy(x+20,y+4); cout << (selectingN > minN ? "< ": "  ") << setw(2) << right << selectingN << (selectingN < maxN ? " >": "  ");
+        drawBox(x,y + 6,60,2,(menuSelecting == 3 ? 15 * 16: 6),"CONFIRM");
+        drawBox(x,y + 9,60,2,(menuSelecting == 4 ? 15 * 16: 6),"RETURN");
+        switch(_getch()){
+        case KEY_UP: case 'w':
+            if (menuSelecting <= 1)
+                menuSelecting = 4;
+            else
+                menuSelecting--;
+            break;
+        case KEY_DOWN: case 's':
+            if (menuSelecting >= 4)
+                menuSelecting = 1;
+            else
+                menuSelecting++;
+            break;
+        case KEY_LEFT: case 'a':
+            if (menuSelecting == 1){
+                selectingM = max(selectingM - 1, minM);
+            }
+            else if (menuSelecting == 2){
+                selectingN = max(selectingN - 1, minN);
+            }
+            break;
+
+        case  KEY_RIGHT: case 'd':
+            if (menuSelecting == 1){
+                selectingM = min(selectingM + 1, maxM);
+            }
+            else if (menuSelecting == 2){
+                selectingN = min(selectingN + 1, maxN);
+            }
+            break;
+        case ' ':
+            menuOption = menuSelecting;
+            SetColor(0);
+            clearScreen();
+            drawBox(0,0,width,height,6, " ");
+            break;
+        default:
+            break;
+        }
+        if (menuOption == 3){
+            M = selectingM;
+            N = selectingN;
+            if (validateColandRow(M,N))
+                break;
+            else
+                M = N = 0;
+        }
+        if (menuOption == 4){
+            GuestMenuChoice = -1;
+            break;
+        }
+
+    }
+
 }
