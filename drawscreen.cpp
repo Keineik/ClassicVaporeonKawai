@@ -61,7 +61,7 @@ void exposeBackground(int x, int y, int width, int height, char **background, in
     for (int i = x; i <=  x+width; i++)
         for (int j = y; j <= y+height; j++){
             gotoxy(i,j);
-            cout <<background[j-backgroundy][i-backgroundx];
+            cout << background[j-backgroundy][i-backgroundx];
         }
 }
 
@@ -397,11 +397,11 @@ void printBoard(pair<int, int> p1, pair<int,int> p2,int boardposx,int boardposy)
     for (int i = 0; i <= M+1; i++) {
         for (int j = 0; j <=  N+1; j++){
             if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
+                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15*16 , board[i][j]);
             else if (choosing.first == i && choosing.second == j)
                 drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
             else
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 6 , board[i][j]);
+                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(board[i][j] - 59)/3] , board[i][j]);
 
         }
     }
@@ -452,9 +452,9 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
         else
         {
 
-            int starty = calculateCellPosY(path[0].first,w,h,boardposx) + h/2;
-            int endy = calculateCellPosY(path[1].first,w,h,boardposx) + h/2;
-            int posx = calculateCellPosX(path[0].second,w,h,boardposy) + w/2;
+            int starty = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+            int endy = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+            int posx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
             drawColumn(starty,endy,posx);
 
         }
@@ -476,10 +476,10 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
         }
         else
         {
-            int starty = calculateCellPosY(path[2].first,w,h,boardposx) + h/2;
+            int starty = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
             int middlex = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
             int middley = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
-            int endx = calculateCellPosX(path[0].second,w,h,boardposy) + w/2;
+            int endx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
             drawColumn(starty,middley,middlex);
             drawBar(middlex,endx,middley);
             gotoxy(middlex,middley);
@@ -712,9 +712,9 @@ void clearVfx(pair <int,int> p1, pair <int,int> p2, vector<pair<int,int>> path, 
         else
         {
 
-            int starty = calculateCellPosY(path[0].first,w,h,boardposx) + h/2;
-            int endy = calculateCellPosY(path[1].first,w,h,boardposx) + h/2;
-            int posx = calculateCellPosX(path[0].second,w,h,boardposy) + w/2;
+            int starty = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
+            int endy = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
+            int posx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
             eraseColumn(background,backgroundx,backgroundy, starty,endy,posx,w,h);
 
         }
@@ -734,10 +734,10 @@ void clearVfx(pair <int,int> p1, pair <int,int> p2, vector<pair<int,int>> path, 
         }
         else
         {
-            int starty = calculateCellPosY(path[2].first,w,h,boardposx) + h/2;
+            int starty = calculateCellPosY(path[2].first,w,h,boardposy) + h/2;
             int middlex = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
             int middley = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
-            int endx = calculateCellPosX(path[0].second,w,h,boardposy) + w/2;
+            int endx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
             eraseColumn(background,backgroundx,backgroundy, starty,middley,middlex,w,h);
             eraseBar(background,backgroundx,backgroundy, middlex,endx,middley,w,h);
         }
@@ -958,10 +958,12 @@ void drawImage(int x, int y, string imagefile){
     ifs.close();
 }
 
-void initializeBackground(char **&background,int &backw, int &backh, string filename){
+void initializeBackground(char **&background,int &backw, int &backh, int &backgroundx, int &backgroundy, string filename){
     ifstream ifs;
     ifs.open(filename);
     ifs >> backw >> backh;
+    backgroundx = offsetx + (width-backw) / 2;
+    backgroundy = offsety + (height-backh) / 2;
     background = new char *[backh];
     for (int i = 0; i< backh; i++)
         background[i] = new char[backw];
@@ -971,17 +973,16 @@ void initializeBackground(char **&background,int &backw, int &backh, string file
     ifs.close();
 }
 
-void deleteBackgroundInfo(char **&background, int &backw, int &backh){
+void deleteBackgroundInfo(char **&background,int &backw, int &backh, int &backgroundx, int &backgroundy){
     for (int i = 0; i < backh; i++)
         delete [] background[i];
     delete [] background;
-    backh = 0;
-    backw = 0;
+    backh =  backw = backgroundx = backgroundy = 0;
 }
-void drawBackground(char **background,int backw, int backh){
+void drawBackground(char **background,int backw, int backh, int backgroundx, int backgroundy){
     SetColor(7);
     for (int i = 0; i < backh;i++){
-        gotoxy(offsetx + (width-backw) / 2, offsety + (height - backh) / 2 + i);
+        gotoxy(backgroundx , backgroundy + i);
         cout << background[i];
     }
 
@@ -1026,19 +1027,19 @@ void displayTimeAndStatus(){
 }
 
 bool validateColandRow(int M, int N){
-    return (M*N != 0 && M*N %2 == 0);
+    return (M*N != 0 && M*N <= 8*16 && M*N %2 == 0);
 }
 
 void drawCustomnizeMenu(){
-    int minM, maxM, selectingM, minN, maxN, selectingN, menuOption, menuSelecting;
+    int minM, maxM, selectingM, minN, maxN, selectingN, menuOption, menuSelecting, finishCustom = false;
     selectingM = selectingN = minN = minM = 2;
-    maxM = 10; maxN = 16;
+    maxM = 8; maxN = 16;
     M = N = 0;
     menuOption = 0;
     menuSelecting = 1;
     int x = offsetx + (width - 60) / 2;
     int y = offsety + (height - 4*(2+1)) / 2;
-    while (true){
+    while (!finishCustom){
         drawBoxOnly(x,y,60,2,(menuSelecting == 1 ? 15: 6),"NUMBERS OF ROWS: "); gotoxy(x+20,y+1); cout << (selectingM > minM ? "< ": "  ") << setw(2) << right << selectingM << (selectingM < maxM ? " >": "  ");
         drawBoxOnly(x,y + 3 ,60,2,(menuSelecting == 2 ? 15: 6),"NUMBERS OF COLS: "); gotoxy(x+20,y+4); cout << (selectingN > minN ? "< ": "  ") << setw(2) << right << selectingN << (selectingN < maxN ? " >": "  ");
         drawBox(x,y + 6,60,2,(menuSelecting == 3 ? 15 * 16: 6),"CONFIRM");
@@ -1077,21 +1078,36 @@ void drawCustomnizeMenu(){
             menuOption = menuSelecting;
             SetColor(0);
             clearScreen();
-            drawBox(0,0,width,height,6, " ");
             break;
         default:
             break;
         }
         if (menuOption == 3){
-            M = selectingM;
-            N = selectingN;
-            if (validateColandRow(M,N))
+            if (validateColandRow(selectingM,selectingN)){
+                M = selectingM;
+                N = selectingN;
                 break;
-            else
-                M = N = 0;
+            }
+            else{
+                drawBox(offsetx + (width - 60) / 2, offsety + (height - 4)/2, 60,2,14*16+4,"M*N must be divisible by 2!! Press M(Menu) or R(Re-select)");
+                switch(_getch()){
+                case 'm':
+                    finishCustom = true;
+                    menuOption = -1;
+                    SetColor(7);
+                    clearScreen();
+                    break;
+                default:
+                    menuOption = -1;
+                    SetColor(7);
+                    clearScreen();
+                    break;
+                }
+            }
+
         }
         if (menuOption == 4){
-            GuestMenuChoice = -1;
+            finishCustom = true;
             break;
         }
 

@@ -5,6 +5,7 @@
 
 // This part contain how Menus in this game work
 
+
 void drawNormalMenu(int MenuSelecting, int MenuSize, string Menu[]){
     int x = offsetx+(width - 20) / 2;
     int y = offsety+(height - MenuSize*(2+1))/2;
@@ -14,15 +15,27 @@ void drawNormalMenu(int MenuSelecting, int MenuSize, string Menu[]){
 }
 
 void drawSaveLoadMenu(){
-    int x = offsetx + (width - 20) / 2;
+    int x = offsetx + (width - 40) / 2;
     int y = offsety + (height - size(SlotMenu)*(2+1))/2;
     for ( int i = 0;  i < size(SlotMenu); i++)
-        if (SlotMenuSelecting == i)
-            drawBox(x,y+i*2+i,20,2,7*16, SlotMenu[i]);
-        else if(currentSave.state[i].p == 0)
-            drawBox(x,y+i*2+i,20,2,6, SlotMenu[i]);
-        else
-            drawBox(x,y+i*2+i,20,2,2, SlotMenu[i]);
+        if (currentSave.state[i].p != 0){
+            if (SlotMenuSelecting == i){
+                drawBox(x,y+i*2+i,40,2,7*16, " ");
+                gotoxy(x+1,y+i*2+i+1); cout << right << setw(2) << setfill('0') << currentSave.state[i].date.dd << "/" << setw(2)  << currentSave.state[i].date.mm << "/" << setw(4) << currentSave.state[i].date.yy << " Score:" << setw(6) << setfill(' ') << currentSave.state[i].points;
+            }
+
+            else{
+                drawBox(x,y+i*2+i,40,2,2, " ");
+                gotoxy(x+1,y+i*2+i+1); cout << right << setw(2) << setfill('0') << currentSave.state[i].date.dd << "/" << setw(2)  << currentSave.state[i].date.mm << "/" << setw(4) << currentSave.state[i].date.yy << " Score:" << setw(6) << setfill(' ') << currentSave.state[i].points;
+            }
+
+        }
+        else{
+             if (SlotMenuSelecting == i)
+                drawBox(x,y+i*2+i,40,2,7*16, SlotMenu[i]);
+            else
+                drawBox(x,y+i*2+i,40,2,6, SlotMenu[i]);
+        }
 }
 
 void navigateMenu(int &MenuSelecting, int &MenuChoice, int MenuSize){
@@ -74,6 +87,8 @@ void showGuestMenu(){
 }
 
 void showSaveMenu(){
+    SlotMenuChoice = -1;
+    SlotMenuSelecting = 0;
     while (save) {
         drawSaveLoadMenu();
         navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
@@ -105,6 +120,7 @@ void showSaveMenu(){
                     LoginMenuSelecting = -1;
                     save = false;
                     stopPlay = true;
+                    deleteBoard();
                 }
                 else{
                     save = true;
@@ -119,6 +135,8 @@ void showSaveMenu(){
 }
 
 void showLoadMenu(){
+    SlotMenuChoice = -1;
+    SlotMenuSelecting = 0;
     while (load) {
         drawSaveLoadMenu();
         navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
@@ -136,6 +154,7 @@ void showLoadMenu(){
                 boardposy = calculateBoardPosY();
                 p1 = p2 = oldchoosing = {0,0};
                 choosing = {currentSave.state[SlotMenuChoice].p_,currentSave.state[SlotMenuChoice].q_};
+                score = currentSave.state[SlotMenuChoice].points;
                 printBoard(p1,p2,boardposx,boardposy);
                 stopPlay = false;
                 load = false;
@@ -160,30 +179,60 @@ void showLoadMenu(){
 
 void updateBoard(int **board, int boardposx, int boardposy, pair<int,int> &p1, pair<int,int> &p2, pair <int,int> choosing, pair<int,int> oldchoosing, int &score ){
 
-    drawCell(calculateCellPosX(oldchoosing.second,w,h,boardposx), calculateCellPosY(oldchoosing.first,w,h,boardposy), w, h , 6 , board[oldchoosing.first][oldchoosing.second]);
-    drawCell(calculateCellPosX(choosing.second,w,h,boardposx), calculateCellPosY(choosing.first,w,h,boardposy), w, h , 15 , board[choosing.first][choosing.second]);
+    drawCell(calculateCellPosX(oldchoosing.second,w,h,boardposx), calculateCellPosY(oldchoosing.first,w,h,boardposy), w, h , CellColor[(board[oldchoosing.first][oldchoosing.second] - 59)/3] , board[oldchoosing.first][oldchoosing.second]);
+    drawCell(calculateCellPosX(choosing.second,w,h,boardposx), calculateCellPosY(choosing.first,w,h,boardposy), w, h , 7*16 , board[choosing.first][choosing.second]);
     if (p1.first != 0 && p1.second != 0)
-        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , 15 , board[p1.first][p1.second]);
+        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , 15*16 , board[p1.first][p1.second]);
     if (p1.first > 0 && p1.second > 0 && p2.first > 0 && p2.second > 0){
                 if (p1.first == -1 && p1.second == -1 && p2.first == -1 && p2.second == -1){
                     shuffle();
-                    drawBackground(background,backw,backh);
+                    drawBackground(background,backw,backh,backgroundx,backgroundy);
                     printBoard(p1,p2,boardposx,boardposy);
                 }
-
                 else if (isLegalMove(p1, p2)) {
                     ScoreAndStreak();
                     streakTimeRemain = 15;
                     board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
                     drawPath(path,boardposx,boardposy);
                     Sleep(100);
-                    clearVfx(p1,p2,path, (width - backw) /2, (height - backh) / 2);
+                    clearVfx(p1,p2,path, backgroundx, backgroundy);
+                    switch (Level){
+                    case 2:
+                        shiftRowLeft(p1.first);
+                        shiftRowLeft(p2.first);
+                        drawBackground(background,backw,backh,backgroundx,backgroundy);
+                        printBoard(p1,p2,boardposx,boardposy);
+                        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(board[p1.first][p1.second] - 59)/3] , board[p1.first][p1.second]);
+                        break;
+                    case 3:
+                        shiftRowRight(p1.first);
+                        shiftRowRight(p2.first);
+                        drawBackground(background,backw,backh,backgroundx,backgroundy);
+                        printBoard(p1,p2,boardposx,boardposy);
+                        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(board[p1.first][p1.second] - 59)/3] , board[p1.first][p1.second]);
+                        break;
+                    case 4:
+                        shiftColUp(p1.second);
+                        shiftColUp(p2.second);
+                        drawBackground(background,backw,backh,backgroundx,backgroundy);
+                        printBoard(p1,p2,boardposx,boardposy);
+                        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(board[p1.first][p1.second] - 59)/3] , board[p1.first][p1.second]);
+                        break;
+                    case 5:
+                        shiftColDown(p1.second);
+                        shiftColDown(p2.second);
+                        drawBackground(background,backw,backh,backgroundx,backgroundy);
+                        printBoard(p1,p2,boardposx,boardposy);
+                        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(board[p1.first][p1.second] - 59)/3] , board[p1.first][p1.second]);
+                        break;
+                    default:
+                        break;
+                    }
                     p1 = p2 = {0,0};
-
                     }
                     else
                     {
-                        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , 6 , board[p1.first][p1.second]);
+                        drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(board[p1.first][p1.second] - 59)/3] , board[p1.first][p1.second]);
                         p1 = p2 = {0,0};
                         streak = 0;
 
@@ -246,6 +295,7 @@ void keyInput_Play(){
         case 'm': // Save game and go back to login menu
             if (newAccount || successLogin){
                 save = true;
+                SetColor(7);
                 clearScreen();
                 drawBox(offsetx,offsety,width,height,6, " ");
                 showSaveMenu();
@@ -271,7 +321,7 @@ void keyInput_Play(){
 
             break;
         case 'h':{
-            if (score >= 200){
+            //if (score >= 200){
                 //a hint is worth 200 score
                 isHint = true;
                 auto moveSuggested = moveSuggestion();
@@ -280,7 +330,7 @@ void keyInput_Play(){
                 choosing = moveSuggested.second;
                 halfpair = true;
 
-            }
+            //}
             break;
 
         }
@@ -291,25 +341,23 @@ void keyInput_Play(){
 
 // GAMEPLAY FUNCTION
 void play() {
-        initializeBackground(background, backw, backh, "./assets/txtimages/amongustwerk_allwhite.txt");
+        initializeBackground(background, backw, backh,backgroundx,backgroundy, "./assets/txtimages/amongustwerk_allwhite.txt");
         drawBox(offsetx, offsety, width, height,6," ");
-        drawBackground(background,backw,backh);
-        printBoard(p1,p2,boardposx,boardposy);
-        drawBox(offsetx,offsety+height + 1,width,10,6," ");
+        drawBackground(background,backw,backh,backgroundx,backgroundy);
+        boardposx = calculateBoardPosX();
+        boardposy = calculateBoardPosY();
         drawHUD();
-        choosing = {1,1};
-        p1 = p2 = oldchoosing = {0,0};
+        printBoard(p1,p2,boardposx,boardposy);
         while (!isWin() && timeRemain > 0){
             displayTimeAndStatus();
-            if (streakTimeRemain == 0)
-                streak = 0;
             if (!isPlayable()) {
                 drawBox(offsetx+(width - 50)/2,offsety+(height-5)/2,50,5,6,"No valid move, shuffle!!! Press any key");
                 _getch();
                 shuffle();
                 Sleep(50);
-                clearCanvas(1,1,width - 2, height - 2);
-                drawBackground(background,backw,backh);
+                clearScreen();
+                drawBox(offsetx,offsety,width,height,6," ");
+                drawBackground(background,backw,backh,backgroundx,backgroundy);
                 printBoard(p1,p2,boardposx,boardposy);
 
             }
@@ -322,15 +370,23 @@ void play() {
             Sleep(tick);
         }
         if (isWin()){
-            _getch();
             drawImage(offsetx+(width - backw)/2,offsety+(height - backh)/2,"./assets/txtimages/amongustwerk.txt");
-            deleteBackgroundInfo(background,backw,backh);
+            deleteBackgroundInfo(background,backw,backh,backgroundx,backgroundy);
             Sleep(1000);
-            clearScreen();
-            entermainmenu =  true;
+            drawBox(offsetx + (width - 60) / 2,offsety + (height - 4) / 2,60, 4, 14*16 + 4 , " BOARD CLEAR SIR!! Press R to continue or M to quit");
+            _getch();
+            p1 = p2 = oldchoosing = {0,0};
+            halfpair = false;
+            deleteBoard();
+            initializeBoard();
+            choosing = {1,1};
+            Sleep(20);
+            Level ++;
+            stopPlay = false;
+            play();
         }
         else if(timeRemain == 0 ){
-            drawBox((width - 60) / 2, (height - 4) / 2,60,4, 4, "Skill issues detected!! Press R to continue or M to quit");
+            drawBox(offsetx + (width - 60) / 2, offsety + (height - 4) / 2,60,4, 4, "Skill issues detected!! Press R to replay or M to quit");
             switch(_getch()){
                 case 'r':
                     p1 = p2 = oldchoosing = {0,0};
@@ -341,32 +397,33 @@ void play() {
                     clearCanvas(1,1,width - 2, height - 2);
                     choosing = {1,1};
                     Sleep(20);
-                    Level ++;
                     stopPlay = false;
                     play();
                     break;
                 default:
                     deleteBoard();
-                    deleteBackgroundInfo(background,backw,backh);
+                    deleteBackgroundInfo(background,backw,backh,backgroundx,backgroundy);
                     stopPlay = true;
                     entermainmenu = true;
-                    clearCanvas(0,0,120,50);
-                    drawBox(0,0,width,height,6, " ");
+                    clearScreen();
+                    drawBox(offsetx,offsety,width,height,6, " ");
                     break;
             }
         }
 }
 
-int main () {
 
+
+
+int main () {
     readBinFile();
     ShowConsoleCursor(false);
     resizeConsole((1920-WindowW)/2,(1080-WindowH)/2, WindowW,WindowH);
-    offsetx = (ConsoleCol- width)/2;
-    offsety = (ConsoleRow - height)/2;
     Sleep(10);
     newAccount = successLogin = false;
     while (!endgame) {
+        offsetx = (ConsoleCol - width) / 2 ;
+        offsety = 3;
         if (GameMenuChoice == -1){
              if(entermainmenu){
                 drawImage(offsetx + 1, offsety + 1,"./assets/txtimages/title.txt");
@@ -408,15 +465,14 @@ int main () {
                 clearScreen();
                 showLoginMenu();
                 if (LoginMenuChoice == 0){
-                    initializeBackground(background,backw,backh,"./assets/txtimages/amongustwerk_allwhite.txt");
+                    M = 8; N = 16;
+                    score = 0; timeRemain = 360;
+                    streak = streakTimeRemain = 0;
                     initializeBoard();
-                    p1 = p2 = oldchoosing = {0,0};
                     choosing = {1,1};
-                    boardposx = calculateBoardPosX();
-                    boardposy = calculateBoardPosY();
-                    drawBox(offsetx,offsety,width,height,6," ");
-                    printBoard(p1,p2,boardposx,boardposy);
+                    p1 = p2 = oldchoosing = {0,0};
                     stopPlay = false;
+                    Level = 1;
                     play();
                 }
                 else if (LoginMenuChoice == 1){
@@ -501,16 +557,30 @@ int main () {
         else if (GameMenuChoice == 2){
             showGuestMenu();
             if (GuestMenuChoice == 0){
-                    initializeBackground(background,backw,backh,"./assets/txtimages/amongustwerk_allwhite.txt");
+                    M = 8; N = 16;
                     initializeBoard();
-                    boardposx = calculateBoardPosX();
-                    boardposy = calculateBoardPosY();
-                    printBoard(p1,p2,boardposx,boardposy);
+                    choosing = {1,1};
+                    p1 = p2 = oldchoosing = {0,0};
                     stopPlay = false;
+                    Level = 1;
                     play();
+                    GuestMenuChoice = -1;
+                    GuestMenuSelecting = 0;
                 }
                 else if (GuestMenuChoice == 1){
+                    M = N = 0;
                     drawCustomnizeMenu();
+                    if (M != 0 && N != 0){
+                        initializeBoard();
+                        choosing = {1,1};
+                        p1 = p2 = oldchoosing = {0,0};
+                        stopPlay = false;
+                        Level = 1;
+                        play();
+                    }
+                    GuestMenuChoice = -1;
+                    GuestMenuSelecting = 0;
+
                 }
                 else if (GuestMenuChoice == 2){
 
@@ -536,8 +606,6 @@ int main () {
         }
     }
     writeBinFile();
-    deleteBoard();
-
     return 0;
 }
 
