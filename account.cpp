@@ -67,6 +67,7 @@ int signUp(char* username, char* password, char* retypePassword) {
         for (int i = 0; i < 5; i++) {
             currentSave.record[i] = {0, 0, 0, 0};
             currentSave.state[i] = {0, 0, 1, 1};
+            currentSave.state[i].level = 0;
         }
 
         listOfUsername.insert(username);
@@ -104,12 +105,14 @@ void logout() {
         currentSave.state[i] = {0, 0, 1, 1};
         currentSave.state[i].board[0] = '\0';
         currentSave.state[i].file_background[0] = '\0';
+        currentSave.state[i].level = 0;
     }
 }
 
 void saveGame(int saveSlot) {
     // save to currentSave
     currentSave.state[saveSlot] = {M, N, 1, 1};
+    currentSave.state[saveSlot].level = Level;
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             currentSave.state[saveSlot].board[i*N + j] = board[i + 1][j + 1];
@@ -117,7 +120,7 @@ void saveGame(int saveSlot) {
 
     // update record to currentSave
     sort(currentSave.record, currentSave.record + 4, sortingPriority);
-    if (currentSave.record[0].points < score) {
+    if (currentSave.record[0].points <= score) {
         // get dd/mm/yyyy
         // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
         time_t now = time(0);
@@ -144,6 +147,7 @@ void loadGame(int saveSlot) {
     deleteBoard();
     M = currentSave.state[saveSlot].p;
     N = currentSave.state[saveSlot].q;
+    Level = currentSave.state[saveSlot].level;
     initializeBoard();
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
