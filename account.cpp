@@ -68,6 +68,7 @@ int signUp(char* username, char* password, char* retypePassword) {
             currentSave.record[i] = {0, 0, 0, 0};
             currentSave.state[i] = {0, 0, 1, 1};
             currentSave.state[i].level = 0;
+            currentSave.state[i].points = 0;
         }
 
         listOfUsername.insert(username);
@@ -106,6 +107,7 @@ void logout() {
         currentSave.state[i].board[0] = '\0';
         currentSave.state[i].file_background[0] = '\0';
         currentSave.state[i].level = 0;
+        currentSave.state[i].points = 0;
     }
 }
 
@@ -113,6 +115,10 @@ void saveGame(int saveSlot) {
     // save to currentSave
     currentSave.state[saveSlot] = {M, N, 1, 1};
     currentSave.state[saveSlot].level = Level;
+    currentSave.state[saveSlot].points = score;
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    currentSave.state[saveSlot].date = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year};
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             currentSave.state[saveSlot].board[i*N + j] = board[i + 1][j + 1];

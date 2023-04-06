@@ -12,8 +12,9 @@ struct State{ //Representing a board state
     char board[BOARDSIZE]; // Current board state
     char file_background[URLSIZE] = {}; // Link to background file. This variable’s value is NULL if there is no current background
     char trash[1] = {}; // self added trash
-    int level;
-    char padding[PADDING - 4] = {};// 500 byte NULL
+    int level, points;
+    Date date;
+    char padding[PADDING - 4*5] = {};// 500 byte NULL
 };
 struct Date{
     int dd, mm, yy;
