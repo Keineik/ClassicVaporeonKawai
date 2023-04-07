@@ -6,6 +6,9 @@
 #define BOARDSIZE 999
 #define URLSIZE 100
 
+struct Date{
+    int dd, mm, yy;
+};
 struct State{ //Representing a board state
     int p, q; // Size of the board game
     int p_, q_; // Current cursor position
@@ -15,9 +18,6 @@ struct State{ //Representing a board state
     int level, points;
     Date date;
     char padding[PADDING - 4*5] = {};// 500 byte NULL
-};
-struct Date{
-    int dd, mm, yy;
 };
 struct Record{
     Date date; // Date of completed record

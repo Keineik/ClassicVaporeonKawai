@@ -17,7 +17,8 @@ void initializeBoard() {
         board[i][0] = blankspace;
         for (int j = 1; j <= N; j++) {
             board[i][j] = poke;
-            if (++count % 4 == 0) poke++;
+            if (++count % 2 == 0) poke++;
+            if (poke == 91) poke = 59;
         }
         board[i][N+1] = blankspace;
     }
