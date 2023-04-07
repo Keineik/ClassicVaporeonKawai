@@ -92,7 +92,8 @@ void initializeBoard() {
         pHead = NULL;
         for (int j = 1; j <= N; j++) {
             addHead(pHead, poke);
-            if (++count % 4 == 0) poke++;
+            if (++count % 2 == 0) poke++;
+            if (poke == 91) poke = 59;
         }
         pHeadLL->firstNode = pHead;
         pHeadLL->size = N;
