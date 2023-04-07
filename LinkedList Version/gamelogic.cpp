@@ -348,14 +348,22 @@ bool isWin() {
     int count = 0;
     LinkedList *curLL = board;
 
-    while (curLL != NULL) {
-        Node *curNode = curLL->firstNode;
-        while (curNode != NULL) {
-            count++;
-            curNode = curNode->next;
+    if (Level == 1) {
+        while (curLL != NULL) {
+            Node *curNode = curLL->firstNode;
+            while (curNode != NULL) {
+                if (curNode->data != blankspace) return false;
+                curNode = curNode->next;
+            }
+            curLL = curLL->next;
         }
-        curLL = curLL->next;
     }
-
-    return count;
+    else {
+        while (curLL != NULL) {
+            if (curLL->firstNode != NULL) return false;
+            curLL = curLL->next;
+        }
+    }
+    
+    return true;
 }

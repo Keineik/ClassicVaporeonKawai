@@ -203,12 +203,12 @@ int main () {
                 halfpair = false;
                 choosing = {1,1};
                 deleteBoard();
-                initializeBoard();
                 Level++;
+                initializeBoard();
                 continue;
             }
             else{
-                 while (!isPlayable()){
+                while (!isPlayable()){
                     shuffle();
                 }
             }
