@@ -321,7 +321,7 @@ void keyInput_Play(){
 
             break;
         case 'h':{
-            //if (score >= 200){
+            if (score >= 200){
                 //a hint is worth 200 score
                 isHint = true;
                 auto moveSuggested = moveSuggestion();
@@ -330,7 +330,7 @@ void keyInput_Play(){
                 choosing = moveSuggested.second;
                 halfpair = true;
 
-            //}
+            }
             break;
 
         }
