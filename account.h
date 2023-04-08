@@ -15,9 +15,9 @@ struct State{ //Representing a board state
     char board[BOARDSIZE]; // Current board state
     char file_background[URLSIZE] = {}; // Link to background file. This variable’s value is NULL if there is no current background
     char trash[1] = {}; // self added trash
-    int level, points;
+    int level, points, time;
     Date date;
-    char padding[PADDING - 4*5] = {};// 500 byte NULL
+    char padding[PADDING - 4*6] = {};// 500 byte NULL
 };
 struct Record{
     Date date; // Date of completed record
@@ -44,6 +44,7 @@ struct topPlayer {
 };
 vector<topPlayer> leaderboard(5, {"\0", 0});
 
+// for sorting record
 bool sortingPriority(Record rec1, Record rec2) {
     if (rec1.points != rec2.points) return rec1.points > rec2.points;
     else if (rec1.date.yy != rec2.date.yy) return rec1.date.yy > rec2.date.yy;
