@@ -128,15 +128,7 @@ void saveGame(int saveSlot) {
     currentSave.state[saveSlot].board[M*N] = '\0';
 
     // update record to currentSave
-    sort(currentSave.record, currentSave.record + 4, sortingPriority);
-    if (currentSave.record[0].points <= score) {
-        // get dd/mm/yyyy
-        // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
-        time_t now = time(0);
-        tm *ltm = localtime(&now);
-        currentSave.record[0] = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year, score};
-    }
-    sort(currentSave.record, currentSave.record + 4, sortingPriority);
+    updateRecord();
 
     // save to saves data
     for (auto &user: saves) {
@@ -162,4 +154,16 @@ void loadGame(int saveSlot) {
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             board[i + 1][j + 1] = currentSave.state[saveSlot].board[i*N + j];
+}
+
+void updateRecord() {
+    sort(currentSave.record, currentSave.record + 4, sortingPriority);
+    if (currentSave.record[0].points <= score) {
+        // get dd/mm/yyyy
+        // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        currentSave.record[0] = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year, score};
+    }
+    sort(currentSave.record, currentSave.record + 4, sortingPriority);
 }

@@ -65,7 +65,7 @@ bool login(char* username, char* password);
 void logout();
 void saveGame(int saveSlot);
 void loadGame(int saveSlot);
-void updateBestRecords(Record record);
+void updateRecord();
 
 // LEADERBOARD
 void updateLeaderboard();
