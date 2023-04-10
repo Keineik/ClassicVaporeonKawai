@@ -38,25 +38,32 @@ savefile currentSave;
 vector<savefile> saves;
 
 // LEADERBOARD  
-struct topPlayer {
-    char name[NAMESIZE];
+struct highScore {
     int points;
+    Date date;
+    char name[NAMESIZE];
+    char trash[2];
 };
-vector<topPlayer> leaderboard(5, {"\0", 0});
+vector<highScore> leaderboard(5, {0, 0, 0, 0, "\0"});
+
+// for sorting leaderboard
+bool isHigherScoreLB(highScore h1, highScore h2) {
+    return h1.points < h2.points;
+}
 
 // for sorting record
 bool sortingPriority(Record rec1, Record rec2) {
-    if (rec1.points != rec2.points) return rec1.points > rec2.points;
-    else if (rec1.date.yy != rec2.date.yy) return rec1.date.yy > rec2.date.yy;
-    else if (rec1.date.mm != rec2.date.mm) return rec1.date.mm > rec2.date.mm;
-    return rec1.date.dd > rec2.date.dd;
+    if (rec1.points != rec2.points) return rec1.points < rec2.points;
+    else if (rec1.date.yy != rec2.date.yy) return rec1.date.yy < rec2.date.yy;
+    else if (rec1.date.mm != rec2.date.mm) return rec1.date.mm < rec2.date.mm;
+    return rec1.date.dd < rec2.date.dd;
 }
 
 // BINARY FILE INTERACTIONS
-void readBinFile();
+void readBinFile(string filename);
 // xor cstr with mask and asign that to dcstr
 void xorCstr(char* cstr, char mask);
-void writeBinFile();
+void writeBinFile(string filename);
 
 // ACCOUNT INTERACTIONS
 // Sign Up: 1 -> succesful, 0 -> password don't match, -1 -> username exsisted, -2 -> username invalid 
@@ -68,4 +75,10 @@ void loadGame(int saveSlot);
 void updateRecord();
 
 // LEADERBOARD
+void readLeaderboardFile(string filename);
+void writeLeaderboardFile(string filename);
 void updateLeaderboard();
+
+// Hacking interactions
+void hackState(int slot, int level, int points, int time, Date date);
+void hackRecord(int slot, Date date, int points);

@@ -1,8 +1,8 @@
 #include "account.h"
 
-void readBinFile() {
+void readBinFile(string filename = "savefile.bin") {
     fstream fs;
-    fs.open("savefile.bin", ios::in | ios::binary);
+    fs.open(filename, ios::in | ios::binary);
 
     if (!fs.is_open()) {
         cout << "File invalid";
@@ -36,9 +36,9 @@ void xorCstr(char* cstr, char mask) {
         cstr[i] ^= mask;
 }
 
-void writeBinFile() {
+void writeBinFile(string filename = "savefile.bin") {
     fstream fs;
-    fs.open("savefile.bin", ios::out | ios::binary);
+    fs.open(filename, ios::out | ios::binary);
 
     for (auto tempsf: saves) {
         xorCstr(tempsf.name, tempsf.mask);
@@ -145,7 +145,6 @@ void loadGame(int saveSlot) {
         }
     }
 
-    deleteBoard();
     M = currentSave.state[saveSlot].p;
     N = currentSave.state[saveSlot].q;
     Level = currentSave.state[saveSlot].level;
@@ -166,4 +165,67 @@ void updateRecord() {
         currentSave.record[0] = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year, score};
     }
     sort(currentSave.record, currentSave.record + 4, sortingPriority);
+}
+
+// LEADERBOARD
+
+void readLeaderboardFile(string filename = "leaderboard.bin") {
+    fstream fs;
+    fs.open(filename, ios::in | ios::binary);
+
+    if (fs.is_open()) {
+        for (int i = 0; i < 5; i++) {
+            highScore tempHS;
+            fs.read((char*) &tempHS, sizeof(highScore));
+            leaderboard[i] = tempHS;
+        }
+        fs.close();
+    }
+    else {
+        cout << "File not found" << endl;
+    }
+}
+
+void writeLeaderboardFile(string filename = "leaderboard.bin") {
+    fstream fs;
+    fs.open(filename, ios::out | ios::binary);
+
+    for (auto tempHS: leaderboard) {
+        fs.write((char*) &tempHS, sizeof(highScore));
+    }
+
+    fs.close();
+}
+
+void updateLeaderboard() {
+    sort(leaderboard.begin(), leaderboard.end(), isHigherScoreLB);
+    if (score > leaderboard[0].points) {
+        strcpy(leaderboard[0].name, currentSave.name);
+        leaderboard[0].points = score;
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        leaderboard[0].date = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year};
+    }
+    sort(leaderboard.begin(), leaderboard.end(), isHigherScoreLB);
+}
+
+// hacking interactions
+void hackState(int slot, int level, int points, int time, Date date) {
+    for (auto &user: saves) {
+        if (strcmp(user.name, currentSave.name) == 0) {
+            user.state[slot].level = level;
+            user.state[slot].points = points;
+            user.state[slot].time = time;
+            user.state[slot].date = date;
+        }
+    }
+}
+
+void hackRecord(int slot, Date date, int points) {
+    for (auto &user: saves) {
+        if (strcmp(user.name, currentSave.name) == 0) {
+            user.record[slot].date = date;
+            user.record[slot].points = points;
+        }
+    }
 }
