@@ -156,7 +156,7 @@ void loadGame(int saveSlot) {
 }
 
 void updateRecord() {
-    sort(currentSave.record, currentSave.record + 4, sortingPriority);
+    sort(currentSave.record, currentSave.record + 5, sortingPriority);
     if (currentSave.record[0].points <= score) {
         // get dd/mm/yyyy
         // https://stackoverflow.com/questions/997946/how-to-get-current-time-and-date-in-c
@@ -164,7 +164,7 @@ void updateRecord() {
         tm *ltm = localtime(&now);
         currentSave.record[0] = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year, score};
     }
-    sort(currentSave.record, currentSave.record + 4, sortingPriority);
+    sort(currentSave.record, currentSave.record + 5, sortingPriority);
 }
 
 // LEADERBOARD
