@@ -217,6 +217,17 @@ void hackState(int slot, int level, int points, int time, Date date) {
             user.state[slot].points = points;
             user.state[slot].time = time;
             user.state[slot].date = date;
+            if (points > user.record[0].points) {
+                user.record[0].date = date;
+                user.record[0].points = points;
+                sort(user.record, user.record + 5, sortingPriority);
+            }
+            if (points > leaderboard[0].points) {
+                leaderboard[0].date = date;
+                strcpy(leaderboard[0].name, user.name);
+                leaderboard[0].points = points;
+                sort(leaderboard.begin(), leaderboard.end(), isHigherScoreLB);
+            }
         }
     }
 }
@@ -226,6 +237,13 @@ void hackRecord(int slot, Date date, int points) {
         if (strcmp(user.name, currentSave.name) == 0) {
             user.record[slot].date = date;
             user.record[slot].points = points;
+            sort(user.record, user.record + 5, sortingPriority);
+        }
+        if (points > leaderboard[0].points) {
+            leaderboard[0].date = date;
+            strcpy(leaderboard[0].name, user.name);
+            leaderboard[0].points = points;
+            sort(leaderboard.begin(), leaderboard.end(), isHigherScoreLB);
         }
     }
 }
