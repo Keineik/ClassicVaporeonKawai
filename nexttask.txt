@@ -1,5 +1,0 @@
-Check new Pokegenerator
-Check new Save load function
-Add sound
-Refined HUD (add time bar instead of only text)
-Victory Ending screen (GIF if possible)
