@@ -26,7 +26,7 @@ void initializeBoard() {
     // lower border
     for (int i = 0; i <= N+1; i++)
         board[M+1][i] = blankspace;
-    
+
     shuffle();
 }
 
@@ -63,7 +63,7 @@ void shuffle() {
 
 void shiftColUp(int col) {
     for (int i = 1; i <= M; i++)
-        if (board[i][col] == blankspace) 
+        if (board[i][col] == blankspace)
             swap(board[i][col], board[i + 1][col]);
 }
 
@@ -74,7 +74,7 @@ void shiftColDown(int col) {
 }
 
 void shiftRowLeft(int row) {
-    for (int i = 1; i <= N; i++) 
+    for (int i = 1; i <= N; i++)
         if (board[row][i] == blankspace)
             swap(board[row][i], board[row][i + 1]);
 }
@@ -247,3 +247,16 @@ bool isWin() {
             if (board[i][j] != blankspace) return false;
     return true;
 }
+
+// Calculate score according to streak
+void updateScore(){
+    //if (!isHint){
+        if (streak < 5)
+            streak ++;
+        score += streak*streakscore;
+    //}
+    //else{
+      //  isHint = false;// hint price =  200 score;
+    //}
+}
+

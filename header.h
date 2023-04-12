@@ -1,8 +1,12 @@
 #pragma once
+#define __WIN32_WINNT 0x500
 #include <bits/stdc++.h>
 #include <windows.h>
+#include <mmsystem.h>
 #include <conio.h>
 #include <iomanip>
+
+
 #define WindowW 1200
 #define WindowH 900
 #define ConsoleCol 144
@@ -24,11 +28,32 @@ int LoginMenuSelecting = -1, LoginMenuChoice = -1;
 int GuestMenuSelecting = -1, GuestMenuChoice = -1;
 int SignUpMenuSelecting = -1, SignUpMenuChoice = -1;
 int SlotMenuSelecting = -1, SlotMenuChoice = -1;
+struct menu{
+    string choice;
+    string about;
+};
 
-string GameMenu [] = {"LOGIN", "SIGN UP", "PLAY AS GUEST", "QUIT"};
-string LoginMenu [] = {"NEW GAME", "LOAD GAME", "CUSTOM GAME", "AUDIO SETTING", "HOW TO PLAY", "LEADERBOARD","CREDIT","LOG OUT"};
-string GuestMenu [] = {"NEW GAME", "CUSTOM GAME", "AUDIO SETTING", "HOW TO PLAY", "CREDIT", "MAIN MENU"};
+menu GameMenu[4] = {{"LOGIN",        "         PLAY WITH YOUR OWN ACCOUNT       "},
+                    {"SIGN UP",      "             CREATE YOUR ACCOUNT          "},
+                    {"PLAY AS GUEST","PLAY WITHOUT SAVE-GAME, LOAD-GAME FEATURES"},
+                    {"QUIT",         "            THE NAME SAYS IT ALL          "}};
+//string GameMenu [] = {"LOGIN", "SIGN UP", "PLAY AS GUEST", "QUIT"};
+menu LoginMenu[7] = {{"NEW GAME",    "               PLAY FROM LEVEL 1                "},
+                    {"LOAD GAME",    "        CONTINUE YOUR UNFINISHED GAMEPLAY       "},
+                    {"CUSTOM GAME",  "             CHOOSE YOUR BOARDSIZE              "},
+                    { "HOW TO PLAY", "             TOTURIAL FOR THIS GAME             "},
+                     {"LEADERBOARD", "  SEE WHO HAS THE HIGHEST SCORE ON THIS DEVICE  "},
+                     {"CREDIT",     "BEST REGARDS TO WHO CREATE AND SUPPORT THIS GAME"},
+                     {"LOG OUT",     "             LOG YOU OUT OF COURSE              "}};
+//string LoginMenu [] = {"NEW GAME", "LOAD GAME", "CUSTOM GAME", "AUDIO SETTING", "HOW TO PLAY", "LEADERBOARD","CREDIT","LOG OUT"};
+//string GuestMenu [] = {"NEW GAME", "CUSTOM GAME", "AUDIO SETTING", "HOW TO PLAY", "CREDIT", "MAIN MENU"};
+menu GuestMenu[5] = {{"NEW GAME",    "               PLAY FROM LEVEL 1                "},
+                    {"CUSTOM GAME",  "             CHOOSE YOUR BOARDSIZE              "},
+                    { "HOW TO PLAY", "             TOTURIAL FOR THIS GAME             "},
+                     {"CREDIT",      "BEST REGARDS TO WHO CREATE AND SUPPORT THIS GAME"},
+                     {"MAIN MENU",   "              RETURN TO MAIN MENU               "}};
 string SlotMenu[] = {"SLOT 1", "SLOT 2",  "SLOT 3", "SLOT 4", "SLOT 5", "RETURN/RESUME"};
+string leaders[5] = {"ligma","sigmaduck","sudenend","amogus","nevergonnagiveyouup"};
 int CellColor[] = {3,4,5,6,7,8,9,10,11,12,13};
 /*
 CellColor[ceil((int(Poke) - 58)/3)];
@@ -45,15 +70,58 @@ char username[NAMESIZE], password[PASSSIZE], retypepassword[PASSSIZE];
 //default board size
 int M = 8, N = 16;
 int **board;
-char **background;
 int Level = 1;
+pair<int, int> p1, p2,choosing,oldchoosing;
+int timeRemain = 360, streakTimeRemain = 0,  miliseconds = 1000, tick = 40, streak = 0, maxstreak = 3, score = 0, streakscore = 100; //Variables used ingame
+
 bool halfpair = false, endgame = false, entermainmenu = true, newAccount = false, successLogin = false;
-int width = 100, height = 40, offsetx, offsety, backgroundx, backgroundy;
+int width = 120, height = 40, offsetx, offsety, backgroundx, backgroundy;
 int boardposx = 0, boardposy = 0;
 int w = 4, h = 2; // width & height of board 's cells
 int backw = 0, backh = 0;
-pair<int, int> p1, p2,choosing,oldchoosing;
+char **background;
+
 bool save = false, load = false, stopPlay = false;
-int timeRemain = 360, streakTimeRemain = 0,  miliseconds = 1000, tick = 40, streak = 0, maxstreak = 3, score = 0, streakscore = 100; //Variables used ingame
 bool isHint = false;
 void play();
+
+// account related
+struct Date{
+    int dd, mm, yy;
+};
+struct State{ //Representing a board state
+    int p, q; // Size of the board game
+    int p_, q_; // Current cursor position
+    char board[BOARDSIZE]; // Current board state
+    char file_background[URLSIZE] = {}; // Link to background file. This variable’s value is NULL if there is no current background
+    char trash[1] = {}; // self added trash
+    int level, points, time;
+    Date date;
+    char padding[PADDING - 4*6] = {};// 500 byte NULL
+};
+struct Record{
+    Date date; // Date of completed record
+    int points; // points achieved
+    char padding[PADDING] = {};// 500 byte NULL
+};
+struct savefile{
+    char mask; // You are required to transfer all char-type variables by performing xor each with the mask-variable, bit-by-bit.
+    char name[NAMESIZE]; // username
+    char password[PASSSIZE]; // password
+    char trash[3] = {}; // self added trash
+    // 500 byte NULL
+    Record record[5]; // List of sorted best records
+    State state[5]; // List of save state
+};
+unordered_set<string> listOfUsername;
+savefile currentSave;
+vector<savefile> saves;
+
+// LEADERBOARD
+struct highScore {
+    int points;
+    Date date;
+    char name[NAMESIZE];
+    char trash[2];
+};
+vector<highScore> leaderboard(5, {0, 0, 0, 0, "\0"});

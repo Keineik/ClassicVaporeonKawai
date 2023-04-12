@@ -246,6 +246,6 @@ void hackRecord(int slot, Date date, int points) {
                 sort(leaderboard.begin(), leaderboard.end(), isHigherScoreLB);
             }
             currentSave = user;
-        }   
+        }
     }
 }

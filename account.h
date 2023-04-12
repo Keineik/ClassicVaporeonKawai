@@ -5,7 +5,7 @@
 #define PASSSIZE 50
 #define BOARDSIZE 999
 #define URLSIZE 100
-
+/*
 struct Date{
     int dd, mm, yy;
 };
@@ -13,7 +13,7 @@ struct State{ //Representing a board state
     int p, q; // Size of the board game
     int p_, q_; // Current cursor position
     char board[BOARDSIZE]; // Current board state
-    char file_background[URLSIZE] = {}; // Link to background file. This variableâ€™s value is NULL if there is no current background
+    char file_background[URLSIZE] = {}; // Link to background file. This variable’s value is NULL if there is no current background
     char trash[1] = {}; // self added trash
     int level, points, time;
     Date date;
@@ -37,7 +37,7 @@ unordered_set<string> listOfUsername;
 savefile currentSave;
 vector<savefile> saves;
 
-// LEADERBOARD  
+// LEADERBOARD
 struct highScore {
     int points;
     Date date;
@@ -45,7 +45,7 @@ struct highScore {
     char trash[2];
 };
 vector<highScore> leaderboard(5, {0, 0, 0, 0, "\0"});
-
+*/
 // for sorting leaderboard
 bool isHigherScoreLB(highScore h1, highScore h2) {
     return h1.points < h2.points;
@@ -66,7 +66,7 @@ void xorCstr(char* cstr, char mask);
 void writeBinFile(string filename);
 
 // ACCOUNT INTERACTIONS
-// Sign Up: 1 -> succesful, 0 -> password don't match, -1 -> username exsisted, -2 -> username invalid 
+// Sign Up: 1 -> succesful, 0 -> password don't match, -1 -> username exsisted, -2 -> username invalid
 int signUp(char* username, char* password, char* retypePassword);
 bool login(char* username, char* password);
 void logout();

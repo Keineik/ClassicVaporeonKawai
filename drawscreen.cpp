@@ -8,6 +8,7 @@ void gotoxy(int x, int y)
   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
+// Modify console window
 void resizeConsole(int posx, int posy, int width, int height)
 {
     RECT rectClient, rectWindow;
@@ -17,6 +18,7 @@ void resizeConsole(int posx, int posy, int width, int height)
     MoveWindow(hWnd,posx,posy,width,height,TRUE);
 }
 
+/*
 void SetWindowSize()
 {
     // SHORT is the type of variable in WINAPI
@@ -33,22 +35,16 @@ void SetWindowSize()
 
     SetConsoleWindowInfo(hStdout, 1, &WindowSize);
 }
-
-void TextColor(int x)
-{
-    HANDLE h= GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(h, x);
-}
-
+*/
 //Set color for cout
+//Color is set by this format: X/16 is background color, X%16 is character color
 void SetColor(int x)
 {
     HANDLE h= GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, x);
 }
 
-// Clear Canvas
-
+// Clear Canvas by cout ' ' character
 void clearCanvas(int x, int y, int width, int height){
     for (int i = x; i <=  x+width; i++)
     for (int j = y; j <= y+height; j++){
@@ -56,15 +52,16 @@ void clearCanvas(int x, int y, int width, int height){
         cout <<" ";
     }
 }
-
+// Expose the area of background according to cell's location on the game canvas
 void exposeBackground(int x, int y, int width, int height, char **background, int backgroundx, int backgroundy){
+    SetColor(7);
     for (int i = x; i <=  x+width; i++)
         for (int j = y; j <= y+height; j++){
             gotoxy(i,j);
             cout << background[j-backgroundy][i-backgroundx];
         }
 }
-
+// clear the entire console by Window's API
 void clearScreen(){
     HANDLE                     hStdOut;
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -158,34 +155,33 @@ void drawBoxOnly(int x, int y, int w, int h, int color, string s){
     gotoxy(x+w,y+h); cout << char(188);
 
 }
-
+// Draw cell, actually the same functions with draw box, but I seperate into two different functions for easy code read
 void drawCell(int x, int y, int w, int h, int color, char c){
-        if(c != blankspace){
-            SetColor(color);
-            for (int i = x; i<= x+w; i++){
-                gotoxy(i,y);
-                cout <<char(196);
-                gotoxy(i, y+h);
-                cout << char(196);
-            }
-            for (int i = y; i < y + h; i++){
-                gotoxy(x,i);
-                cout << char(179);
-                gotoxy(x+w,i);
-                cout << char(179);
-            }
-            for (int i = x+1 ; i < x+w; i++){
-                for (int j = y+1; j < y+h; j++){
-                    gotoxy(i,j);
-                    cout <<  " ";
-                }
-            }
-            gotoxy(x+ 2, y+h/2); cout << c;
-            gotoxy(x,y); cout << char(218);
-            gotoxy(x+w,y); cout << char(191);
-            gotoxy(x,y+h); cout << char(192);
-            gotoxy(x+w,y+h); cout << char(217);
+    SetColor(color);
+    for (int i = x; i<= x+w; i++){
+        gotoxy(i,y);
+        cout <<char(196);
+        gotoxy(i, y+h);
+        cout << char(196);
+    }
+    for (int i = y; i < y + h; i++){
+        gotoxy(x,i);
+        cout << char(179);
+        gotoxy(x+w,i);
+        cout << char(179);
+    }
+    for (int i = x+1 ; i < x+w; i++){
+        for (int j = y+1; j < y+h; j++){
+            gotoxy(i,j);
+            cout <<  " ";
         }
+    }
+    gotoxy(x+ 2, y+h/2); cout << c;
+    gotoxy(x,y); cout << char(218);
+    gotoxy(x+w,y); cout << char(191);
+    gotoxy(x,y+h); cout << char(192);
+    gotoxy(x+w,y+h); cout << char(217);
+
 }
 // Draw menu
 
@@ -201,7 +197,7 @@ void drawCell(int x, int y, int w, int h, int color, char c){
     Quit: 4
 */
 
-// Draw Login/Signup Form
+// DrawLogin and drawSignupForm also act as getInput function
 
 void drawLoginForm(){
     int x, y;
@@ -210,10 +206,10 @@ void drawLoginForm(){
     char c; int countchar = 0;
     gotoxy(x,y);
     SetColor(6);
-    cout << "Username (No longer than 15 chars)";
+    cout << "Username (No longer than 50 chars)";
     drawBox(x,y+1,60,2,6," ");
     gotoxy(x, y + 5);
-    cout << "PASSWORD (No longer than 15 chars)";
+    cout << "PASSWORD (No longer than 50 chars)";
     drawBox(x,y + 6, 60,2,6," ");
     ShowConsoleCursor(true);
     gotoxy(x+1,(y+1)+(2/2));
@@ -266,16 +262,15 @@ void drawLoginForm(){
 void drawSignupForm(){
     int x, y;
     int countchar = 0;
-    char rewritepassword[60];
     char c;
     x = offsetx + (width - 60) / 2;
     y = offsety + (height - (2*6)) / 2;
     gotoxy(x,y);
     SetColor(6);
-    cout << "USERNAME (No longer than 15 chars)";
+    cout << "USERNAME (No longer than 50 chars)";
     drawBox(x,y+1,60,2,6," ");
     gotoxy(x, y + 4);
-    cout << "PASSWORD (No longer than 15 chars)";
+    cout << "PASSWORD (No longer than 50 chars)";
     drawBox(x,y + 5, 60,2,6," ");
     gotoxy(x,y+8);
     cout << "RE-TYPE PASSWORD";
@@ -330,7 +325,7 @@ void drawSignupForm(){
     gotoxy(x+1,(y+9)+(2/2));
     while(c = _getch()){
         if (c == ENTER){
-            rewritepassword[countchar] = '\0';
+            retypepassword[countchar] = '\0';
             break;
         }
 
@@ -358,22 +353,127 @@ void drawSignupForm(){
 // Draw How to play
 
 void drawHow2Play(){
-    gotoxy (5,5);
+    offsetx = offsetx + 10;
+    offsety += 5;
+    SetColor(6);
+    gotoxy (offsetx + 4, offsety + 4);
     cout << "Interaction:";
-    gotoxy(10,6);
+    gotoxy(offsetx + 10, offsety + 6);
     cout << "Move :";
-    gotoxy(12, 10);
-    cout << "WASD";drawCell(17, 11,4,2,6,'A'); drawCell(23,8,4,2,6,'W'); drawCell(23,11,4,2,6,'S'); drawCell(29,11,4,2,6,'D');
-    gotoxy(12,17);
-    cout << "ARROWKEYS"; drawCell(22, 18,4,2,6,'<'); drawCell(28,15,4,2,6,'^'); drawCell(28,18,4,2,6,'v'); drawCell(34,18,4,2,6,'>');
-    gotoxy(12,24);
-    cout << "Select:"; drawBox(22,23,16,2,6,"   SPACEBAR   ");
+    gotoxy(offsetx + 12, offsety + 10);
+    cout << "WASD";drawCell(offsetx + 22, offsety + 11,4,2,6*16,'A'); drawCell(offsetx +28,offsety + 7,4,2,6*16,'W'); drawCell(offsetx + 28 ,offsety + 11,4,2,6*16,'S'); drawCell(offsetx + 34,offsety + 11,4,2,6*16,'D');
+    gotoxy(offsetx + 12,offsety +17);
+    SetColor(6);
+    cout << "ARROWKEYS"; drawCell(offsetx + 22, offsety +19,4,2,6*16,'<'); drawCell(offsetx +28,offsety +15,4,2,6*16,'^'); drawCell(offsetx + 28,offsety +19 ,4,2,6*16,'v'); drawCell(offsetx +34,offsety +19,4,2,6*16,'>');
+    gotoxy(offsetx +12,offsety +24);
+    SetColor(6);
+    cout << "Select:"; drawBox(offsetx +22,offsety +23,16,2,6*16,"   SPACEBAR   ");
+    gotoxy(offsetx + width / 2 + 4, offsety + 4);
+    SetColor(6);
+    cout << "Legal Move: I, L, Z (3 lines max)";
+
+    while(true){
+        Sleep(1000);
+        clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
+        drawCell(offsetx + width/2 + 5, offsety + 9, w,h, 6, 'A'); drawCell(offsetx + width/2 + 15, offsety + 9, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 10, offsety + 16, w,h, 6, 'A'); drawCell(offsetx + width/2 + 10, offsety + 22, w,h, 6, 'A');
+        Sleep(500);
+        drawBar(offsetx + width/2 + 5 + w/2 + 1, offsetx + width/2 + 15 + w/2-1, offsety + 9 + h/2);
+        drawColumn(offsety + 16+ h/2 + 1, offsety + 22 + h/2 - 1, offsetx + width/2 + 10 + w/2);
+        Sleep(1000);
+        clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
+        drawCell(offsetx + width/2 + 5, offsety + 6, w,h, 6, 'A'); drawCell(offsetx + width/2 + 15, offsety + 6, w,h, 6, 'B');
+                                                                    drawCell(offsetx + width/2 + 15, offsety + 12, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 5, offsety + 16, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 5, offsety + 22, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 22, w,h, 6, 'A');
+        Sleep(500);
+        drawColumn(offsety + 6 + h/2 + 1, offsety + 12 + h/2, offsetx + width/2 + 5 + w/2);
+        drawBar(offsetx + width/2 + 5 + w/2 + 1, offsetx + width/2 + 15 + w/2, offsety + 16 + h/2);
+        Sleep(500);
+        drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2 - 1, offsety + 12 + h/2);
+        drawColumn(offsety + 16 + h/2, offsety + 22 + h/2 - 1, offsetx + width/2 + 15 + w/2);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 12 + h/2);
+        cout << char(200);
+        gotoxy(offsetx + width/2 + 15 + w/2,offsety + 16 + h/2);
+        cout << char(187);
+        Sleep(1000);
+        clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
+        drawCell(offsetx + width/2 + 5, offsety + 6, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 6, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 5, offsety + 12, w,h, 6, 'A');
+                                                                    drawCell(offsetx + width/2 + 15, offsety + 16, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 5, offsety + 22, w,h, 6, 'A'); drawCell(offsetx + width/2 + 15, offsety + 22, w,h, 6, 'B');
+        Sleep(500);
+        drawBar(offsetx + width/2 + 5 + w/2 + 1, offsetx + width/2 + 15 + w/2, offsety + 12 + h/2);
+        drawColumn(offsety + 16 + h/2 , offsety + 22 + h/2 - 1, offsetx + width/2 + 5 + w/2);
+        Sleep(500);
+        drawColumn(offsety + 6 + h/2 + 1, offsety + 12 + h/2, offsetx + width/2 + 15 + w/2);
+        drawBar(offsetx + width/2 + 5 + w/2 + 1, offsetx + width/2 + 15 + w/2 - 1, offsety + 16 + h/2);
+        gotoxy(offsetx + width/2 + 15 + w/2,offsety + 12 + h/2);
+        cout << char(188);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 16 + h/2);
+        cout << char(201);
+        Sleep(1000);
+        clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
+        drawCell(offsetx + width/2 + 5, offsety + 10, w,h, 6, 'A'); drawCell(offsetx + width/2 + 10, offsety + 10, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 10, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 10, offsety + 16, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 10, offsety + 19, w,h, 6, 'B');
+        drawCell(offsetx + width/2 + 10, offsety + 22, w,h, 6, 'A');
+        Sleep(500);
+        drawColumn(offsety + 6 + h/2, offsety + 10 + h/2 - 1, offsetx + width/2 + 5 + w/2);
+        drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 10 + w/2 - 1, offsety + 16 + h/2);
+        Sleep(500);
+        drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2, offsety + 6 + h/2);
+        drawColumn(offsety + 16 + h/2, offsety + 22 + h/2, offsetx + width/2 + 5 + w/2);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 6 + h/2);
+        cout << char(201);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 16 + h/2);
+        cout << char(201);
+        Sleep(500);
+        drawColumn(offsety + 6 + h/2, offsety + 10 + h/2 - 1, offsetx + width/2 + 15 + w/2);
+        drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 10 + w/2 - 1, offsety + 22 + h/2);
+        gotoxy(offsetx + width/2 + 15 + w/2,offsety + 6 + h/2);
+        cout << char(187);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 22 + h/2);
+        cout << char(200);
+        Sleep(1000);
+        clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
+        drawCell(offsetx + width/2 + 5, offsety + 6, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 6, w,h, 6, 'A');
+        drawCell(offsetx + width/2 + 5, offsety + 12, w,h, 6, 'A'); drawCell(offsetx + width/2 + 15, offsety + 12, w,h, 6, 'B');
+        drawCell(offsetx + width/2 + 5, offsety + 16, w,h, 6, 'A'); drawCell(offsetx + width/2 + 15, offsety + 16, w,h, 6, 'B');
+        drawCell(offsetx + width/2 + 5, offsety + 22, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 22, w,h, 6, 'A');
+        Sleep(500);
+        drawColumn(offsety + 12 + h/2 - 1, offsety + 9 + h/2, offsetx + width/2 + 5 + w/2);
+        drawColumn(offsety + 16 + h/2 + 1, offsety + 19 + h/2, offsetx + width/2 + 5 + w/2);
+        Sleep(500);
+        drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2, offsety + 9 + h/2);
+        drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2, offsety + 19 + h/2);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 9 + h/2);
+        cout << char(201);
+        gotoxy(offsetx + width/2 + 5 + w/2,offsety + 19 + h/2);
+        cout << char(200);
+        Sleep(500);
+        drawColumn(offsety + 6 + h/2+1, offsety + 9 + h/2 , offsetx + width/2 + 15 + w/2);
+        drawColumn(offsety + 22 + h/2-1, offsety + 19 + h/2 , offsetx + width/2 + 15 + w/2);
+        gotoxy(offsetx + width/2 + 15 + w/2,offsety + 9 + h/2);
+        cout << char(188);
+        gotoxy(offsetx + width/2 + 15 + w/2,offsety + 19 + h/2);
+        cout << char(187);
+        gotoxy(offsetx +  width/2 - 30, offsety + height - 5);
+        SetColor(6);
+        cout << "PRESS R TO REWATCH M TO RETURN TO MENU";
+        if (_getch() == 'm')
+            break;
+        else if (_getch() == 'r')
+        {
+            gotoxy(offsetx +  width/2 - 30, offsety + height - 5);
+            cout << "                                      ";
+            continue;
+        }
+    }
 }
-// Draw In-game HUD
-
-
 
 // Draw play board
+// ------------Calculating function for board and cells-------
 int calculateCellPosX(int j, int w, int h, int boardposx){
     return (boardposx + j*w + j);
 }
@@ -391,23 +491,50 @@ int calculateBoardPosY(){
     return offsety + (height -((M+2)*(h+1)))/2;
 
 }
-
-void printBoard(pair<int, int> p1, pair<int,int> p2,int boardposx,int boardposy) {
+// ------------Stop here-------
+// Print the board
+void printBoard() {
 
     for (int i = 0; i <= M+1; i++) {
         for (int j = 0; j <=  N+1; j++){
-            if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15*16 , board[i][j]);
-            else if (choosing.first == i && choosing.second == j)
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
-            else
-                drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(board[i][j] - 59)/3] , board[i][j]);
+            if (board[i][j] != blankspace){
+                if (choosing.first == i && choosing.second == j)
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
+                else
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(board[i][j] - 59)/3] , board[i][j]);
+            }
+        else
+            exposeBackground(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy),w,h,background,backgroundx,backgroundy);
 
         }
     }
 }
 
-// Draw legal move
+//Level-based functions: these two functions used to redraw col or row after a shift
+void redrawCol(int j){
+    for (int i = 0; i <= M +1; i++)
+         if (board[i][j] != blankspace){
+                if (choosing.first == i && choosing.second == j)
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
+                else
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(board[i][j] - 59)/3] , board[i][j]);
+            }
+        else
+            exposeBackground(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy),w,h,background,backgroundx,backgroundy);
+}
+
+void redrawRow(int i){
+    for (int j = 0; j <= N+1; j++)
+        if (board[i][j] != blankspace){
+                if (choosing.first == i && choosing.second == j)
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15 , board[i][j]);
+                else
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(board[i][j] - 59)/3] , board[i][j]);
+            }
+        else
+            exposeBackground(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy),w,h,background,backgroundx,backgroundy);
+}
+// Draw horizontal line and vertical line, used in drawPath functions
 void drawBar(int startx, int endx, int posy){
     if (startx > endx) swap(startx,endx);
     for (int i =  startx; i <= endx; i++){
@@ -423,20 +550,7 @@ void drawColumn(int starty, int endy, int posx){
                 cout << char(186);
             }
 }
-
-void eraseBar(char **background, int backgroundx, int backgroundy, int startx, int endx, int posy, int w, int h){
-    if (startx > endx) swap(startx,endx);
-    for (int i =  startx; i <= endx; i+=w){
-                exposeBackground(i - w/2 ,posy - h/2, w, h,background,backgroundx,backgroundy);
-            }
-}
-
-void eraseColumn(char **background, int backgroundx, int backgroundy, int starty, int endy, int posx, int w, int h){
-    if (starty > endy) swap(starty,endy);
-    for (int i =  starty; i <= endy; i+=h){
-                exposeBackground(posx - w/2,i - h/2,w,h,background,backgroundx,backgroundy);
-            }
-}
+// Draw legal move from vector paths
 void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
     SetColor(2);
     int point = size(path);
@@ -693,6 +807,21 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
     }
 }
 
+// the following functions delete the output of previous drawPath function
+void eraseBar(char **background, int backgroundx, int backgroundy, int startx, int endx, int posy, int w, int h){
+    if (startx > endx) swap(startx,endx);
+    for (int i =  startx; i <= endx; i+=w){
+                exposeBackground(i - w/2 ,posy - h/2, w, h,background,backgroundx,backgroundy);
+            }
+}
+
+void eraseColumn(char **background, int backgroundx, int backgroundy, int starty, int endy, int posx, int w, int h){
+    if (starty > endy) swap(starty,endy);
+    for (int i =  starty; i <= endy; i+=h){
+                exposeBackground(posx - w/2,i - h/2,w,h,background,backgroundx,backgroundy);
+            }
+}
+
 void clearVfx(pair <int,int> p1, pair <int,int> p2, vector<pair<int,int>> path, int backgroundx, int backgroundy){
     SetColor(7);
     exposeBackground(calculateCellPosX(p1.second,w,h,boardposx),calculateCellPosY(p1.first,w,h,boardposy), w, h,background,backgroundx,backgroundy);
@@ -896,7 +1025,7 @@ void ShowConsoleCursor(bool showFlag)
 }
 
 
-//Draw Game Title
+//Draw Image funtion, Image is stored under texts file, demonstrated by ASCII 128 characters
 void drawImage(int x, int y, string imagefile){
     ifstream ifs;
     ifs.open(imagefile);
@@ -957,7 +1086,7 @@ void drawImage(int x, int y, string imagefile){
     }
     ifs.close();
 }
-
+// Get background from txt files
 void initializeBackground(char **&background,int &backw, int &backh, int &backgroundx, int &backgroundy, string filename){
     ifstream ifs;
     ifs.open(filename);
@@ -972,6 +1101,7 @@ void initializeBackground(char **&background,int &backw, int &backh, int &backgr
         ifs.getline(background[i], backw+1, '\n');
     ifs.close();
 }
+// Delete to avoid memory leaks
 
 void deleteBackgroundInfo(char **&background,int &backw, int &backh, int &backgroundx, int &backgroundy){
     for (int i = 0; i < backh; i++)
@@ -991,41 +1121,63 @@ void drawBackground(char **background,int backw, int backh, int backgroundx, int
 // Draw Game status on the screen when first enter play()
 void drawHUD(){
     SetColor(15);
-    gotoxy(offsetx + 10, offsety + height + 3); cout << "Score: " << right << score;
-    gotoxy(offsetx + 10, offsety + height + 5); cout << "Time left: " << right << timeRemain;
-    gotoxy(offsetx + 10, offsety + height + 7); cout << "Streak: " << right << streak;}
+    gotoxy(offsetx,offsety + height + 3); cout <<"Time left: " << setw(3) << setfill(' ') << right << timeRemain;
+    gotoxy(offsetx,offsety + height + 5); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
+    gotoxy(offsetx,offsety + height + 6); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
+    gotoxy(offsetx,offsety + height + 8); cout << "Score: "     << setw(7) << setfill(' ') << right << score;
+    gotoxy(offsetx,offsety + height + 9); cout << "Streak: "    << setw(6) << setfill(' ') << right << streak;
 
-
+}
+void initializeTimeBar(){
+    for (int i = 1; i < timeRemain / 3 - 1; i++){
+        UpperTimeBar[i] = LowerTimeBar[i] = char(205);
+    }
+    UpperTimeBar[timeRemain / 3] = LowerTimeBar[timeRemain / 3] = '\0';
+    UpperTimeBar[0] = char(201);
+    LowerTimeBar[0] = char(200);
+    UpperTimeBar[timeRemain/3 - 1] = char(187);
+    LowerTimeBar[timeRemain/3 - 1] = char(188);
+}
 // display time and Game status during gameplay
 void displayTimeAndStatus(){
     miliseconds -= tick;
     // Sleep for 40 milisecond;
     if (miliseconds == 0){
-        if (streakTimeRemain > 0)
+        if (streakTimeRemain > 0){
             streakTimeRemain --;
+        }
         timeRemain --;
+        if (timeRemain % 3 == 0){
+            UpperTimeBar[timeRemain / 3] = LowerTimeBar[timeRemain / 3] = '\0';
+            UpperTimeBar[timeRemain/3 - 1] = char(187);
+            LowerTimeBar[timeRemain/3 - 1] = char(188);
+
+        }
         SetColor(15);
-        gotoxy(offsetx + 10,offsety + height + 3); cout <<"Score: "     << setw(7) << right << score;
-        gotoxy(offsetx + 10,offsety + height + 5); cout << "Time left: " << setw(3) << right << timeRemain;
-        gotoxy(offsetx + 10,offsety + height + 7); cout << "Streak: "    << setw(6) << right << streak;
+        gotoxy(offsetx,offsety + height + 3); cout <<"Time left: " << setw(3) << setfill(' ') << right << timeRemain;
+        gotoxy(offsetx,offsety + height + 5); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
+        gotoxy(offsetx,offsety + height + 6); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
+        gotoxy(offsetx,offsety + height + 8); cout << "Score: "     << setw(7) << setfill(' ') << right << score;
+        gotoxy(offsetx,offsety + height + 9); cout << "Streak: "    << setw(6) << setfill(' ') << right << streak;
         if (streak > 0){
-            gotoxy(offsetx + 25 , offsety + height + 7); cout << "Streak resets after: " << setw(2)<< right << streakTimeRemain;
+            gotoxy(offsetx + 15 , offsety + height + 9); cout << "Streak resets after: " << setw(2)<< right << streakTimeRemain;
         }
         else{
-            gotoxy(offsetx + 25 , offsety + height + 7); cout << "                                       ";
+            gotoxy(offsetx + 15 , offsety + height + 9); cout << "                                       ";
 
         }
         if (score >= 200) {
-            gotoxy(offsetx + 10 , offsety + height + 9); cout << "Press H(Hint) for 200 scores";
+            gotoxy(offsetx, offsety + height + 10); cout << "Press H(Hint) for 200 scores";
         }
         else
         {
-            gotoxy(offsetx + 10 , offsety +  height + 9); cout << "                             ";
+            gotoxy(offsetx , offsety +  height + 10); cout << "                             ";
         }
         miliseconds = 1000;
     }
 }
 
+// this sub-function belongs to drawCustomizeMenu()
 bool validateColandRow(int M, int N){
     return (M*N != 0 && M*N <= 8*16 && M*N %2 == 0);
 }
@@ -1113,4 +1265,369 @@ void drawCustomnizeMenu(){
 
     }
 
+}
+
+void drawLeaderboardandHighScore(){
+    int x = offsetx + (width - 80)/2;
+    int y = offsety;
+    drawBox(x - 2,y,82,15,6*16," ");
+    gotoxy(x,y + 1); cout << setw(10)<< setfill(' ') << left << "RANK" << setw(50) << left << "USERNAME" <<  setw(10) << "POINT" << setw(10)  << "DATE";
+    int i = 0;
+    for (auto leader : leaderboard){
+        if (leader.points == 0){
+            SetColor(6*16);
+            gotoxy(x,y + 4 + (4-i)*2);
+            cout << setw(10) <<setfill(' ') << left << 5-i << setw(50) << left << leaders[4-i] <<  setw(10) << "----------" << setw(10) << setfill(' ')<< right << "dd/mm/yyyy";
+
+        }
+        else{
+            SetColor(6*16);
+            gotoxy(x,y + 4 + (4-i)*2);
+            cout << setw(10) <<setfill(' ') << left << 5-i << setw(50) << left << leader.name <<  setw(10) << leader.points
+                << setw(2) << setfill('0')<< right <<  leader.date.dd << "/" << setw(2) << leader.date.mm << "/" << setw(4) << leader.date.yy;
+
+        }
+        i++;
+    }
+    drawBar(x-2,x+80,y+2);
+    gotoxy(x-2,y+2); cout << char(204);
+    gotoxy(x+80,y+2); cout << char (185);
+    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << char(203); gotoxy(x+8,y+15); cout << char(202);
+    drawColumn(y,y+15,x+ 59); gotoxy(x+59,y); cout << char(203); gotoxy(x+59,y+15); cout << char(202);
+    drawColumn(y,y+15,x+ 69); gotoxy(x+69,y); cout << char(203); gotoxy(x+69,y+15); cout << char(202);
+    gotoxy(x+8, y+2); cout << char(206);
+    gotoxy(x+59, y+2); cout << char(206);
+    gotoxy(x+69, y+2); cout << char(206);
+
+
+    x = offsetx + (width - 30)/2;
+    y += 20;
+
+    drawBox(x - 2,y,33,15,6*16," ");
+    SetColor(6*16);
+    gotoxy(x,y + 1); cout <<setfill(' ') << setw(9) << left << "RANK" << setw(11) << "POINT" << setw(10)  << "DATE";
+    i = 0;
+    for (auto player : currentSave.record ){
+        if (player.points == 0){
+            SetColor(6*16);
+            gotoxy(x,y + 4 + (4-i)*2);
+            cout <<  setw(9) <<setfill(' ')  << left << 5-i << setw(11) << "----------" <<  setw(10) << "dd/mm/yyyy";
+
+        }
+        else{
+            SetColor(6*16);
+            gotoxy(x,y + 4 + (4-i)*2);
+            cout << setw(9) <<setfill(' ') << left << 5-i << setw(11) << left << player.points
+               << setw(2) << setfill('0')<< right <<  player.date.dd << "/" << setw(2) << player.date.mm << "/" << setw(4) << player.date.yy;
+
+
+        }
+        i++;
+    }
+    drawBar(x-2,x+31,y+2);
+    gotoxy(x-2,y+2); cout << char(204);
+    gotoxy(x+31,y+2); cout << char (185);
+    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << char(203); gotoxy(x+8,y+15); cout << char(202);
+    drawColumn(y,y+15,x+ 19); gotoxy(x+19,y); cout << char(203); gotoxy(x+19,y+15); cout << char(202);
+    gotoxy(x+8, y+2); cout << char(206);
+    gotoxy(x+19, y+2); cout << char(206);
+
+}
+
+// This function take menu - arrays of string variables
+void drawNormalMenu(int MenuSelecting, int MenuSize, menu Menu[]){
+    int x = offsetx + (width - 20) / 2;
+    int y = offsety+(height - MenuSize*(2+1))/2;
+    for (int i = 0;  i < MenuSize; i++)
+            drawBox(x,y+i*2+i,20,2,(MenuSelecting == i ? 7*16 : 6), Menu[i].choice);
+    if (MenuSelecting >= 0){
+        gotoxy(offsetx + (width - Menu[MenuSelecting].about.length())/2, y + MenuSize*(2+1) + 2);
+        SetColor(6);
+        cout << setw(50) << setfill(' ') << left << Menu[MenuSelecting].about;
+    }
+
+
+}
+
+void drawSaveLoadMenu(){
+    int x = offsetx + (width - 20) / 2;
+    int y = offsety + (height - size(SlotMenu)*(2+1))/2;
+    for ( int i = 0;  i < size(SlotMenu); i++)
+        if (currentSave.state[i].p != 0){
+            drawBox(x,y+i*2+i,20,2,(SlotMenuSelecting == i? 7*16 : 2) , " ");
+            gotoxy(x+1,y+i*2+i+1); cout << right << setw(2) << setfill('0') << currentSave.state[i].date.dd << "/"
+                                        << setw(2)  << currentSave.state[i].date.mm << "/"
+                                        << setw(4) << currentSave.state[i].date.yy;
+        if (currentSave.state[SlotMenuSelecting].p != 0 && SlotMenuSelecting >= 0 ){
+            SetColor(2);
+            gotoxy(offsetx + (width - 40) / 2, y+size(SlotMenu)*(2+1) + 2);
+            cout << "Score:" << setw(6) << right << setfill(' ') << currentSave.state[SlotMenuSelecting].points
+                                        <<" | " << "Level: " << currentSave.state[SlotMenuSelecting].level
+                                        <<" | " << "Time remains: " << setw(3)  << currentSave.state[SlotMenuSelecting].time;
+        }
+        else{
+            SetColor(2);
+            gotoxy(offsetx + (width - 40) / 2, y+size(SlotMenu)*(2+1) + 2);
+            cout << "                                                              ";
+        }
+        }
+        else{
+             if (SlotMenuSelecting == i)
+                drawBox(x,y+i*2+i,20,2,7*16, SlotMenu[i]);
+            else
+                drawBox(x,y+i*2+i,20,2,6, SlotMenu[i]);
+        }
+
+
+
+}
+
+void navigateMenu(int &MenuSelecting, int &MenuChoice, int MenuSize){
+    switch(_getch()){
+        case KEY_UP: case 'w':
+            if (MenuSelecting <= 0)
+                MenuSelecting = MenuSize - 1;
+            else
+                MenuSelecting--;
+            break;
+        case KEY_DOWN: case 's':
+            if (MenuSelecting >= MenuSize -1)
+                MenuSelecting = 0;
+            else
+                MenuSelecting++;
+            break;
+        case ' ':
+            MenuChoice = MenuSelecting;
+            SetColor(0);
+            clearScreen();
+            break;
+        case '/':
+            if (GameMenuChoice == 0)
+            {
+                SetColor(10);
+                clearScreen();
+                LoginMenuChoice = 10;
+            }
+            break;
+        default:
+            break;
+        }
+}
+
+void showGameMenu(){
+    while(GameMenuChoice == -1){
+        drawNormalMenu(GameMenuSelecting,size(GameMenu),GameMenu);
+        navigateMenu(GameMenuSelecting,GameMenuChoice, size(GameMenu));
+    }
+
+}
+
+void showLoginMenu(){
+    while (GameMenuChoice == 0 && LoginMenuChoice == -1){
+        drawNormalMenu(LoginMenuSelecting,size(LoginMenu),LoginMenu);
+        navigateMenu(LoginMenuSelecting,LoginMenuChoice, size(LoginMenu));
+    }
+
+}
+
+void showGuestMenu(){
+    while (GameMenuChoice == 2 && GuestMenuChoice == -1) {
+        drawNormalMenu(GuestMenuSelecting,size(GuestMenu),GuestMenu);
+        navigateMenu(GuestMenuSelecting, GuestMenuChoice,size(GuestMenu));
+    }
+
+}
+
+void showSaveMenu(){
+    SlotMenuChoice = -1;
+    SlotMenuSelecting = 0;
+    while (save) {
+        drawSaveLoadMenu();
+        navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
+        if (SlotMenuChoice != -1)
+             if (SlotMenuChoice == size(SlotMenu) - 1){
+                SlotMenuChoice = -1;
+                SlotMenuSelecting = -1;
+                printBoard();
+                stopPlay = false;
+                play();
+            }
+            else if(currentSave.state[SlotMenuChoice].p == 0){
+                saveGame(SlotMenuChoice);
+                SlotMenuChoice = -1;
+                SlotMenuSelecting = -1;
+                LoginMenuChoice = -1;
+                LoginMenuSelecting = -1;
+                save = false;
+                stopPlay = true;
+                updateLeaderboard();
+            }
+            else{
+                drawBox(offsetx + (width - 30)/2,offsety + (height - 4)/2,30,4,9,"Overwrite ? Y(YES) / N(NO)");
+                char c = _getch();
+                if (c == 'y' || c == 'Y'){
+                    saveGame(SlotMenuChoice);
+                    SlotMenuChoice = -1;
+                    SlotMenuSelecting = -1;
+                    LoginMenuChoice = -1;
+                    LoginMenuSelecting = -1;
+                    save = false;
+                    stopPlay = true;
+                    deleteBoard();
+                    updateLeaderboard();
+                }
+                else{
+                    save = true;
+                    SlotMenuChoice = -1;
+                    clearScreen();
+                    showSaveMenu();
+                }
+
+            }
+    }
+
+}
+
+void showLoadMenu(){
+    SlotMenuChoice = -1;
+    SlotMenuSelecting = 0;
+    while (load) {
+        drawSaveLoadMenu();
+        navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
+        if (SlotMenuChoice != -1)
+            if (SlotMenuChoice == size(SlotMenu) - 1){
+                // Return to Login Menu
+                LoginMenuChoice = -1;
+                load = false;
+            }
+            else if(currentSave.state[SlotMenuChoice].p != 0){
+                // Load old gameplay from selected slot and start play
+                loadGame(SlotMenuChoice);
+                load = false;
+                boardposx = calculateBoardPosX();
+                boardposy = calculateBoardPosY();
+                p1 = p2 = oldchoosing = {0,0};
+                stopPlay = false;
+                play();
+                }
+                else
+                {
+                    // This happen when the selected slot contains no data, output a dialog box
+                    drawBox(offsetx + (width - 30)/2,offsety + (height - 4)/2,30,4,9,"No data! Press any key");
+                    _getch();
+                    SetColor(6);
+                    clearScreen();
+                    load = true;
+                    SlotMenuChoice = -1;
+                    showLoadMenu();
+                }
+
+    }
+
+
+
+}
+void drawHackingConsole(){
+    int isHacking = 0;
+    SetColor(10);
+    gotoxy(0,0);
+    char code[25] = {};
+    int x = offsetx + (width - 30)/2;
+    int y = offsety + (height - (2*2))/2;
+    int countchar = 0;
+    gotoxy(x,y);
+    SetColor(10);
+    cout << "Enter the code or M only to exit";
+    drawBox(x,y+1,30,2,10," ");
+    char c;
+    gotoxy(x+1,(y+1)+(2/2));
+    ShowConsoleCursor(TRUE);
+    while (strcmp(code,"22clcxisgoat")!=0 ){
+        countchar = 0;
+        while(c = _getch()){
+            if (c == ENTER){
+                code[countchar] = '\0';
+                break;
+            }
+            else if (c == 8 && countchar > 0){
+                countchar = ((countchar - 1)>0 ? countchar -1 : 0);
+                gotoxy(x+1+countchar,y+1+2/2);
+                cout << " ";
+                gotoxy(x+1+countchar,y+1+2/2);
+
+            }
+            else if (c!= 8 && countchar < 20 && countchar >= 0){
+                cout << c;
+                code[countchar] = c;
+                countchar++;
+            }
+        }
+        if (strcmp(code,"m") == 0)
+            break;
+    }
+    false;
+    if (strcmp(code,"22clcxisgoat")==0){
+        int slot, level, points, time;
+        Date date;
+        isHacking = 1;
+        clearScreen();
+        SlotMenuChoice = -1;
+        SlotMenuSelecting = 0;
+        x = offsetx + (width - 20) / 2;
+        y = offsety + (height - (size(SlotMenu)-1)*(2+1))/2;
+        while(isHacking == 1){
+            drawSaveLoadMenu();
+            navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
+            if (SlotMenuChoice == size(SlotMenu) - 1){
+                break;
+            }
+            else if (currentSave.state[SlotMenuChoice].p != 0){
+                slot =  SlotMenuChoice;
+                isHacking = 2;
+            }
+        }
+        if (isHacking == 2){
+            x = offsetx + (width - 30)/2;
+            y = offsety + 10;
+            drawBox(x-1,y,30,15,6*16," ");
+            gotoxy(x,y + 1); cout << setw(15) << left << "SLOT INFO" << setw(11) << left << "VALUE";
+            int i = 0;
+            SetColor(6*16);
+            gotoxy(x,y + 4); cout << setw(15) << left << "DATE" << setw(2) << setfill('0') << right << currentSave.state[slot].date.dd << "/" << setw(2)<< currentSave.state[slot].date.mm << "/" << setw(4) << currentSave.state[i].date.yy;
+            gotoxy(x,y + 6); cout << setw(15) << setfill(' ') << left << "LEVEL" << setw(11) << left << currentSave.state[slot].level;
+            gotoxy(x,y + 8); cout << setw(15) << left << "POINTS" << setw(11) << left << currentSave.state[slot].points;
+            gotoxy(x,y + 10); cout << setw(15) << left << "TIME LEFT" << setw(11) << left << currentSave.state[slot].time;
+            drawBar(x-1,x+29,y+2);
+            gotoxy(x-1,y+2); cout << char(204);
+            gotoxy(x+29,y+2); cout << char (185);
+            drawColumn(y,y+15,x + 14); gotoxy(x+14,y); cout << char(203); gotoxy(x+14,y+15); cout << char(202);
+            gotoxy(x+14, y+2); cout << char(206);
+            x = 0;
+            y += 2;
+            char choice, temp; // temp to discard slash
+            gotoxy(x,y);
+            SetColor(10);
+            cout << "Type your disired new value: "<< endl;
+            cout << "Change date ? Y/n: "; cin  >> choice;
+            if (tolower(choice) == 'y'){
+                cout << "New date value(dd/mm/yyyy): "; cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
+            }
+            cout << "Change level? Y/n: "; cin >> choice;
+            if (tolower(choice) == 'y'){
+                cout << "New level value: "; cin >> level;
+            }
+
+            cout << "Change points? Y/n: "; cin >> choice;
+            if (tolower(choice) == 'y'){
+                cout << "New points value:"; cin >> points;
+            }
+            cout << "Change time left? Y/n: "; cin >> choice;
+            if (tolower(choice) == 'y'){
+                cout << "New time left value:"; cin >> time;
+            }
+            hackState(slot,level,points,time,date);
+            hackRecord(slot,date,points);
+        }
+    }
+    ShowConsoleCursor(FALSE);
 }
