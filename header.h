@@ -67,12 +67,20 @@ CellColor[ceil((int(Poke) - 58)/3)];
 8	Gray	F	Bright White
 */
 char username[NAMESIZE], password[PASSSIZE], retypepassword[PASSSIZE];
-//default board size
-int M = 8, N = 16;
-int **board;
-int Level = 1;
-pair<int, int> p1, p2,choosing,oldchoosing;
-int timeRemain = 360, streakTimeRemain = 0,  miliseconds = 1000, tick = 40, streak = 0, maxstreak = 3, score = 0, streakscore = 100; //Variables used ingame
+
+struct Game {
+    int M = 8, N = 16, **board, Level = 1;
+    pair<int, int> p1, p2, choosing, oldchoosing;
+    int timeRemain = 360, streakTimeRemain = 0, streak = 0, score = 0;
+    char background_file[100];
+} game;
+
+int &M = game.M, &N = game.N, **&board = game.board, &Level = game.Level;
+pair<int, int> &p1 = game.p1, &p2 = game.p2, &choosing = game. choosing, &oldchoosing = game.oldchoosing;
+int &timeRemain = game.timeRemain, &streakTimeRemain = game.streakTimeRemain, &streak = game.streak, &score = game.score;
+char *background_file = game.background_file;
+
+int tick = 40, maxstreak = 3, streakscore = 100, miliseconds = 1000;
 
 bool halfpair = false, endgame = false, entermainmenu = true, newAccount = false, successLogin = false;
 int width = 120, height = 40, offsetx, offsety, backgroundx, backgroundy;
@@ -93,7 +101,7 @@ struct State{ //Representing a board state
     int p, q; // Size of the board game
     int p_, q_; // Current cursor position
     char board[BOARDSIZE]; // Current board state
-    char file_background[URLSIZE] = {}; // Link to background file. This variable’s value is NULL if there is no current background
+    char file_background[URLSIZE] = {}; // Link to background file. This variableï¿½s value is NULL if there is no current background
     char trash[1] = {}; // self added trash
     int level, points, time;
     Date date;
