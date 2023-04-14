@@ -1,6 +1,6 @@
 #include "header.h"
-using namespace std;
 
+vector<pair<int, int>> path;
 
 struct Node {
     int data = 0;

@@ -66,7 +66,7 @@ void changeData(int x, int y, int data) {
     // move to desired linked list
     for (int i = 1; i < x; i++)
         curLL = curLL->next;
-
+    
     // move to desired node and change data
     Node *curNode = curLL->firstNode;
     for (int i = 1; i < y; i++)
@@ -92,7 +92,8 @@ void initializeBoard() {
         pHead = NULL;
         for (int j = 1; j <= N; j++) {
             addHead(pHead, poke);
-            if (++count % 4 == 0) poke++;
+            if (++count % 2 == 0) poke++;
+            if (poke == 91) poke = 59;
         }
         pHeadLL->firstNode = pHead;
         pHeadLL->size = N;
@@ -347,14 +348,22 @@ bool isWin() {
     int count = 0;
     LinkedList *curLL = board;
 
-    while (curLL != NULL) {
-        Node *curNode = curLL->firstNode;
-        while (curNode != NULL) {
-            count++;
-            curNode = curNode->next;
+    if (Level == 1) {
+        while (curLL != NULL) {
+            Node *curNode = curLL->firstNode;
+            while (curNode != NULL) {
+                if (curNode->data != blankspace) return false;
+                curNode = curNode->next;
+            }
+            curLL = curLL->next;
         }
-        curLL = curLL->next;
     }
-
-    return count;
+    else {
+        while (curLL != NULL) {
+            if (curLL->firstNode != NULL) return false;
+            curLL = curLL->next;
+        }
+    }
+    
+    return true;
 }
