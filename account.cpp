@@ -153,6 +153,7 @@ void loadGame(int saveSlot) {
     for (int i = 0; i < M; i++)
         for (int j = 0; j < N; j++)
             board[i + 1][j + 1] = currentSave.state[saveSlot].board[i*N + j];
+    levelDif();
 }
 
 void updateRecord() {

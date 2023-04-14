@@ -62,27 +62,70 @@ void shuffle() {
 }
 
 void shiftColUp(int col) {
-    for (int i = 1; i <= M; i++)
-        if (board[i][col] == blankspace)
-            swap(board[i][col], board[i + 1][col]);
+    for (int i = 1; i <= M; i++) {
+        bool swapped = false;
+        for (int j = 1; j <= M; j++) {
+            if (board[j][col] == blankspace) {
+                swap(board[j][col], board[j + 1][col]);
+                swapped = true;
+            }
+        }
+        if (!swapped) return;
+    }
 }
 
 void shiftColDown(int col) {
-    for (int i = M; i >= 1; i--)
-        if (board[i][col] == blankspace)
-            swap(board[i][col], board[i - 1][col]);
+    for (int i = M; i >= 1; i--) {
+        bool swapped = false;
+        for (int j = M; j >= 1; j--) {
+            if (board[j][col] == blankspace) {
+                swap(board[j][col], board[j - 1][col]);
+                swapped = true;
+            }
+        }
+        if (!swapped) return;
+    }
 }
 
 void shiftRowLeft(int row) {
-    for (int i = 1; i <= N; i++)
-        if (board[row][i] == blankspace)
-            swap(board[row][i], board[row][i + 1]);
+    for (int i = 1; i <= N; i++) {
+        bool swapped = false;
+        for (int j = 1; j <= N; j++) {
+            if (board[row][j] == blankspace) {
+                swap(board[row][j], board[row][j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) return;
+    }
 }
 
 void shiftRowRight(int row) {
-    for (int i = N; i >= 1; i--)
-        if (board[row][i] == blankspace)
-            swap(board[row][i], board[row][i - 1]);
+    for (int i = N; i >= 1; i--) {
+        bool swapped = false;
+        for (int j = N; j >= 1; j--) {
+            if (board[row][j] == blankspace) {
+                swap(board[row][j], board[row][j - 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) return;
+    }
+}
+
+void levelDif() {
+    if (Level == 2)
+        for (int i = 1; i <= M; i++)
+            shiftRowLeft(i);
+    else if (Level == 3)
+        for (int i = 1; i <= M; i++)
+            shiftRowRight(i);
+    else if (Level == 4)
+        for (int i = 1; i <= N; i++)
+            shiftColUp(i);
+    else if (Level == 5)
+        for (int i = 1; i <= N; i++)
+            shiftColDown(i);
 }
 
 bool isLegalMove(pair<int, int> p1, pair<int, int> p2) {
