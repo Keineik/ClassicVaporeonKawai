@@ -1361,7 +1361,7 @@ void drawLeaderboardandHighScore(){
     gotoxy(x+8, y+2); cout << char(206);
     gotoxy(x+19, y+2); cout << char(206);
     if (LoginMenuChoice == 4)
-        drawBox(offsetx + (width - 22) / 2, y + 20, 22,2, 6*16, "PRESS ANY KEY TO EXIT");
+        drawBox(offsetx + (width - 25) / 2, y + 20, 25,2, 6*16, "PRESS ANY KEY TO EXIT");
 
 }
 
@@ -1636,8 +1636,8 @@ void drawHackingConsole(){
             return;
     }
     if (strcmp(code,"22clcxisgoat")==0){
-        int slot, level, points, time;
-        Date date;
+        int slot = 0, level = 0, points = 0, time = 0;
+        Date date = {};
         isHacking = -1;
         clearScreen();
         x = offsetx + (width - 20) / 2;
@@ -1689,6 +1689,9 @@ void drawHackingConsole(){
             SetColor(10);
             cout << "Type your desired new value: "<< endl;
             cout << "Change date ? Y/n: "; cin  >> choice;
+            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+                cout << "Please type Y or N: "; cin >> choice;
+            }
             if (tolower(choice) == 'y'){
                 cout << "New date value(dd/mm/yyyy): "; cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
                 while(!isValidDate(date)){
@@ -1697,6 +1700,9 @@ void drawHackingConsole(){
                 }
             }
             cout << "Change level (1-5)? Y/n: "; cin >> choice;
+            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+                cout << "Please type Y or N: "; cin >> choice;
+            }
             if (tolower(choice) == 'y'){
                 cout << "New level value: "; cin >> level;
                 while (level > 5 || level < 1){
@@ -1705,10 +1711,16 @@ void drawHackingConsole(){
             }
 
             cout << "Change points? Y/n: "; cin >> choice;
+            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+                cout << "Please type Y or N: "; cin >> choice;
+            }
             if (tolower(choice) == 'y'){
                 cout << "New points value:"; cin >> points;
             }
             cout << "Change time left? Y/n: "; cin >> choice;
+            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+                cout << "Please type Y or N: "; cin >> choice;
+            }
             if (tolower(choice) == 'y'){
                 cout << "New time left value:"; cin >> time;
             }
@@ -1732,7 +1744,7 @@ void drawHackingConsole(){
                     cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
                 }
             cout << "Points value:"; cin >> points;
-            hackRecord(slot-1,date,points);
+            hackRecord(5-slot,date,points);
             writeBinFile();
             writeLeaderboardFile();
             return;
@@ -1748,9 +1760,7 @@ void drawCredit(){
     x = (ConsoleCol - 80) / 2;
     y = 2;
     drawBox(x,y,80,40,14," ");
-    char filename[40];
-    strcpy(filename,ImageDir);
-    strcat(filename,"credit.txt");
+    string filename = ImageDir + "credit.txt";
     ifstream ifs;
     string s = {}; int line = 0;
     ifs.open(filename);

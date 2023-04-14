@@ -174,8 +174,13 @@ void play() {
         stopPlay = false;
         halfpair = false;
         initializeTimeBar();
-        initializeBackground(background, backw, backh,backgroundx,backgroundy, "./assets/txtimages/amongustwerk_allwhite.txt");
-        PlaySound(TEXT("C:/Users/W.Long/Downloads/Megalovania.wav"),NULL, SND_ASYNC | SND_LOOP);
+        background_file[0] = '\0';
+        // Link to the directory of background files
+        string filename = ImageDir + backgroundAllwhite[Level - 1];
+        // Start create background
+        initializeBackground(background, backw, backh,backgroundx,backgroundy, filename );
+        string music = SoundDir + sound[Level - 1];
+        PlaySound(TEXT(music.c_str()),NULL, SND_ASYNC | SND_LOOP);
         drawBox(offsetx, offsety, width, height,6," ");
         drawBackground(background,backw,backh,backgroundx,backgroundy);
         boardposx = calculateBoardPosX();
@@ -185,12 +190,14 @@ void play() {
         while (!stopPlay){
             if (isWin()){
                 if (Level < 5){
-                drawImage(offsetx+(width - backw)/2,offsety+(height - backh)/2,"./assets/txtimages/amongustwerk.txt");
+                filename = ImageDir + backgroundColor[Level - 1];
+                drawImage(offsetx+(width - backw)/2,offsety+(height - backh)/2, filename);
+                Sleep(1000);
                 deleteBackgroundInfo(background,backw,backh,backgroundx,backgroundy);
                 int bonusScore = timeRemain*50;
                 score += bonusScore;
                 string dialog ="TIME LEFT: " + to_string(timeRemain) + "!!! BONUS: " + to_string(bonusScore) + "!!! Press any keys to continue";
-                drawBox(offsetx + (width - 60) / 2,offsety + (height - 4) / 2,60, 4, 14*16 + 4 , dialog);
+                drawBox(offsetx + (width - 65) / 2,offsety + (height - 4) / 2,65, 4, 14*16 + 4 , dialog);
                 _getch();
                 p1 = p2 = oldchoosing = {0,0};
                 halfpair = false;
@@ -279,7 +286,7 @@ int main () {
 
     while (!endgame) {
         if (GameMenuChoice == -1 || stopPlay )
-        PlaySound(TEXT("C:/Users/W.Long/Downloads/Gigachad.wav"),NULL, SND_ASYNC | SND_LOOP);
+        PlaySound(TEXT("./assets/sounds/menu.wav"),NULL, SND_ASYNC | SND_LOOP);
         offsetx = (ConsoleCol - width) / 2 ;
         offsety = 3;
         if (GameMenuChoice == -1){
@@ -289,6 +296,8 @@ int main () {
                 drawImage(offsetx + 75,offsety + 17,"./assets/txtimages/vaporeon.txt");
                 entermainmenu = false;
             }
+            SetColor(6);
+            gotoxy(offsetx + 25, offsety + 40); cout << "USE ARROW KEYS OR WASD TO MOVE. PRESS SPACEBAR TO SELECT.";
             showGameMenu();
         }
 
@@ -351,6 +360,7 @@ int main () {
                     drawCustomnizeMenu();
                     if (M != 0 && N != 0){
                         initializeBoard();
+                        score = 0;
                         initializeTimeBar();
                         choosing = {1,1};
                         p1 = p2 = oldchoosing = {0,0};
@@ -370,6 +380,7 @@ int main () {
                 else if (LoginMenuChoice == 4){
                     drawLeaderboardandHighScore();
                     _getch();
+                    SetColor(6);
                     LoginMenuChoice = -1;
                 }
                 else if (LoginMenuChoice == 5){
@@ -469,6 +480,7 @@ int main () {
                     drawCustomnizeMenu();
                     if (M != 0 && N != 0){
                         initializeBoard();
+                        score = 0;
                         initializeTimeBar();
                         choosing = {1,1};
                         p1 = p2 = oldchoosing = {0,0};

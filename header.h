@@ -5,8 +5,6 @@
 #include <mmsystem.h>
 #include <conio.h>
 #include <iomanip>
-#define ImageDir "./assets/txtimages/"
-
 #define WindowW 1200
 #define WindowH 900
 #define ConsoleCol 144
@@ -75,7 +73,8 @@ struct Game {
     int timeRemain = 360, streakTimeRemain = 0, streak = 0, score = 0;
     char background_file[100];
 } game;
-
+const string ImageDir =  "./assets/txtimages/"; // Direct to folder that contains background
+const string SoundDir = "./assets/sounds/"; // Direct to folder that contains sounds
 int &M = game.M, &N = game.N, **&board = game.board, &Level = game.Level;
 pair<int, int> &p1 = game.p1, &p2 = game.p2, &choosing = game. choosing, &oldchoosing = game.oldchoosing;
 int &timeRemain = game.timeRemain, &streakTimeRemain = game.streakTimeRemain, &streak = game.streak, &score = game.score;
@@ -94,6 +93,9 @@ bool save = false, load = false, stopPlay = false;
 bool isHint = false;
 void play();
 
+string backgroundAllwhite[5] = {"background_allwhite1.txt","background_allwhite2.txt","background_allwhite3.txt", "background_allwhite4.txt","background_allwhite5.txt"};
+string backgroundColor[5] = {"background1.txt", "background2.txt","background3.txt", "background4.txt", "background5.txt"};
+string sound[5] = {"stage1.wav", "stage2.wav","stage3.wav", "stage4.wav", "stage5.wav"};
 // account related
 struct Date{
     int dd, mm, yy;
