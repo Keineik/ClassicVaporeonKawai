@@ -448,6 +448,7 @@ int main () {
         else if (GameMenuChoice == 2){
             showGuestMenu();
             if (GuestMenuChoice == 0){
+                    score = 0;
                     PlaySound(NULL, NULL, 0);
                     initializeTimeBar();
                     PlaySound(TEXT("C:/Users/W.Long/Downloads/Megalovania.wav"),NULL, SND_ASYNC | SND_LOOP);
@@ -507,9 +508,9 @@ int main () {
                 }
         }
         else if (GameMenuChoice == 3){
-            break;
+            endgame = true;
         }
     }
-    exit(1);
+    return 0;
 }
 
