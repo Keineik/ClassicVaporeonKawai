@@ -5,7 +5,7 @@
 #include <mmsystem.h>
 #include <conio.h>
 #include <iomanip>
-#define ImageDir "./assets/txtimage/"
+#define ImageDir "./assets/txtimages/"
 
 #define WindowW 1200
 #define WindowH 900
@@ -47,9 +47,10 @@ menu LoginMenu[7] = {{"NEW GAME",    "               PLAY FROM LEVEL 1          
                      {"LOG OUT",     "             LOG YOU OUT OF COURSE              "}};
 //string LoginMenu [] = {"NEW GAME", "LOAD GAME", "CUSTOM GAME", "AUDIO SETTING", "HOW TO PLAY", "LEADERBOARD","CREDIT","LOG OUT"};
 //string GuestMenu [] = {"NEW GAME", "CUSTOM GAME", "AUDIO SETTING", "HOW TO PLAY", "CREDIT", "MAIN MENU"};
-menu GuestMenu[5] = {{"NEW GAME",    "               PLAY FROM LEVEL 1                "},
+menu GuestMenu[6] = {{"NEW GAME",    "               PLAY FROM LEVEL 1                "},
                     {"CUSTOM GAME",  "             CHOOSE YOUR BOARDSIZE              "},
                     { "HOW TO PLAY", "             TOTURIAL FOR THIS GAME             "},
+                    {"LEADERBOARD", "  SEE WHO HAS THE HIGHEST SCORE ON THIS DEVICE  "},
                      {"CREDIT",      "BEST REGARDS TO WHO CREATE AND SUPPORT THIS GAME"},
                      {"MAIN MENU",   "              RETURN TO MAIN MENU               "}};
 string SlotMenu[] = {"SLOT 1", "SLOT 2",  "SLOT 3", "SLOT 4", "SLOT 5", "RETURN/RESUME"};

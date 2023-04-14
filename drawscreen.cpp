@@ -462,7 +462,7 @@ void drawHow2Play(){
         SetColor(6);
         cout << "PRESS R TO REWATCH M TO RETURN TO MENU";
         if (_getch() == 'm')
-            break;
+            return;
         else if (_getch() == 'r')
         {
             gotoxy(offsetx +  width/2 - 30, offsety + height - 5);
@@ -1145,7 +1145,11 @@ void drawHUD(){
     cout << "Select:"; drawBox(hudx+10, hudy + 27,20,2,15*16,"     SPACEBAR     ");
     SetColor(15);
     gotoxy(hudx+2, hudy + 33);
-    cout << "Save and return to menu: "; drawCell(hudx + 28, hudy + 32,w,h,15*16, 'M');
+    if(newAccount || successLogin)
+        cout << "Save and return to menu: ";
+    else
+        cout << "Return to menu: ";
+    drawCell(hudx + 28, hudy + 32,w,h,15*16, 'M');
     SetColor(15);
     gotoxy(hudx+2, hudy + 37);
     cout << "Hint( costs 200 scores): "; drawCell(hudx + 28, hudy + 36,w,h,15*16, 'H');
@@ -1292,8 +1296,9 @@ void drawCustomnizeMenu(){
 }
 // Draw Leaderboard and Highscore
 void drawLeaderboardandHighScore(){
-    int x = offsetx + (width - 80)/2;
-    int y = offsety;
+    int x = (ConsoleCol - 80)/2;
+    int y = (ConsoleRow - 35)/2;
+    drawBox(offsetx + (width - 14) / 2, y - 4, 14,2, 6*16, "LEADERBOARD ");
     drawBox(x - 2,y,82,15,6*16," ");
     gotoxy(x,y + 1); cout << setw(10)<< setfill(' ') << left << "RANK" << setw(50) << left << "USERNAME" <<  setw(10) << "POINT" << setw(10)  << "DATE";
     int i = 0;
@@ -1325,8 +1330,8 @@ void drawLeaderboardandHighScore(){
 
 
     x = offsetx + (width - 30)/2;
-    y += 20;
-
+    y += 21;
+    drawBox(offsetx + (width - 14) / 2, y - 4, 14,2, 6*16, "YOUR RECORD ");
     drawBox(x - 2,y,33,15,6*16," ");
     SetColor(6*16);
     gotoxy(x,y + 1); cout <<setfill(' ') << setw(9) << left << "RANK" << setw(11) << "POINT" << setw(10)  << "DATE";
@@ -1355,9 +1360,44 @@ void drawLeaderboardandHighScore(){
     drawColumn(y,y+15,x+ 19); gotoxy(x+19,y); cout << char(203); gotoxy(x+19,y+15); cout << char(202);
     gotoxy(x+8, y+2); cout << char(206);
     gotoxy(x+19, y+2); cout << char(206);
+    if (LoginMenuChoice == 4)
+        drawBox(offsetx + (width - 22) / 2, y + 20, 22,2, 6*16, "PRESS ANY KEY TO EXIT");
 
 }
 
+void drawLeaderboard(){
+    int x = offsetx + (width - 80)/2;
+    int y = offsety + (height - 15)/2;
+    drawBox(offsetx + (width - 14) / 2, y - 4, 14,2, 6*16, " LEADERBOARD ");
+    drawBox(x - 2,y,82,15,6*16," ");
+    gotoxy(x,y + 1); cout << setw(10)<< setfill(' ') << left << "RANK" << setw(50) << left << "USERNAME" <<  setw(10) << "POINT" << setw(10)  << "DATE";
+    int i = 0;
+    for (auto leader : leaderboard){
+        if (leader.points == 0){
+            SetColor(6*16);
+            gotoxy(x,y + 4 + (4-i)*2);
+            cout << setw(10) <<setfill(' ') << left << 5-i << setw(50) << left << leaders[4-i] <<  setw(10) << "----------" << setw(10) << setfill(' ')<< right << "dd/mm/yyyy";
+
+        }
+        else{
+            SetColor(6*16);
+            gotoxy(x,y + 4 + (4-i)*2);
+            cout << setw(10) <<setfill(' ') << left << 5-i << setw(50) << left << leader.name <<  setw(10) << leader.points
+                << setw(2) << setfill('0')<< right <<  leader.date.dd << "/" << setw(2) << leader.date.mm << "/" << setw(4) << leader.date.yy;
+
+        }
+        i++;
+    }
+    drawBar(x-2,x+80,y+2);
+    gotoxy(x-2,y+2); cout << char(204);
+    gotoxy(x+80,y+2); cout << char (185);
+    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << char(203); gotoxy(x+8,y+15); cout << char(202);
+    drawColumn(y,y+15,x+ 59); gotoxy(x+59,y); cout << char(203); gotoxy(x+59,y+15); cout << char(202);
+    drawColumn(y,y+15,x+ 69); gotoxy(x+69,y); cout << char(203); gotoxy(x+69,y+15); cout << char(202);
+    gotoxy(x+8, y+2); cout << char(206);
+    gotoxy(x+59, y+2); cout << char(206);
+    gotoxy(x+69, y+2); cout << char(206);
+}
 // This function take menu - arrays of string variables and its size to draw onto the console
 void drawNormalMenu(int MenuSelecting, int MenuSize, menu Menu[]){
     int x = offsetx + (width - 20) / 2;
@@ -1501,6 +1541,7 @@ void showSaveMenu(){
                     stopPlay = true;
                     deleteBoard();
                     updateLeaderboard();
+                    writeBinFile();
                 }
                 else{
                     save = true;
@@ -1556,7 +1597,7 @@ void showLoadMenu(){
 
 // saveFile hacking interactive console
 void drawHackingConsole(){
-    int isHacking = 0;
+    int isHacking = -1;
     SetColor(10);
     gotoxy(0,0);
     char code[25] = {};
@@ -1658,7 +1699,7 @@ void drawHackingConsole(){
             cout << "Change level (1-5)? Y/n: "; cin >> choice;
             if (tolower(choice) == 'y'){
                 cout << "New level value: "; cin >> level;
-                while (level > 5 || level < 0){
+                while (level > 5 || level < 1){
                     cout << "Invalid level!! Please choose 1-5: "; cin >> level;
                 }
             }
@@ -1681,7 +1722,7 @@ void drawHackingConsole(){
             char temp;
             SetColor(10);
             cout << "Choose slot to (1-5): "; cin >> slot;
-            while (slot < 0 || slot > 5){
+            while (slot < 1 || slot > 5){
                 cout << "Invalid slot!!! \n Please choose slot tobetween 1 and 5: "; cin >> slot;
             }
             cout << "Type your desired new record: "<< endl;
@@ -1691,7 +1732,7 @@ void drawHackingConsole(){
                     cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
                 }
             cout << "Points value:"; cin >> points;
-            hackRecord(slot,date,points);
+            hackRecord(slot-1,date,points);
             writeBinFile();
             writeLeaderboardFile();
             return;
@@ -1702,3 +1743,23 @@ void drawHackingConsole(){
     ShowConsoleCursor(FALSE);
 }
 
+void drawCredit(){
+    int x; int y;
+    x = (ConsoleCol - 80) / 2;
+    y = 2;
+    drawBox(x,y,80,40,14," ");
+    char filename[40];
+    strcpy(filename,ImageDir);
+    strcat(filename,"credit.txt");
+    ifstream ifs;
+    string s = {}; int line = 0;
+    ifs.open(filename);
+    SetColor(15);
+    while (ifs){
+        getline(ifs,s);
+        gotoxy(x + (80 - s.length())/2, y + 1 + line); cout << s;
+        line ++;
+    }
+
+    ifs.close();
+}

@@ -213,6 +213,7 @@ void play() {
                     updateRecord();
                     updateLeaderboard();
                     stopPlay = true;
+                    score = 0;
                     deleteBoard();
                 }
             }
@@ -335,6 +336,8 @@ int main () {
                     stopPlay = false;
                     Level = 1;
                     play();
+                    SetColor(6);
+                    clearScreen();
                     LoginMenuChoice = -1;
                 }
                 else if (LoginMenuChoice == 1){
@@ -370,7 +373,7 @@ int main () {
                     LoginMenuChoice = -1;
                 }
                 else if (LoginMenuChoice == 5){
-                    drawBox(offsetx + (width - 30) / 2, offsety + (height - 4) / 2, 30,4,6,"IN PROGRESS PART");
+                    drawCredit();
                     _getch();
                     LoginMenuChoice = -1;
 
@@ -456,6 +459,7 @@ int main () {
                     Level = 1;
                     play();
                     SetColor(6);
+                    clearScreen();
                     GuestMenuChoice = -1;
                     GuestMenuSelecting = 0;
                 }
@@ -483,11 +487,18 @@ int main () {
                     GuestMenuChoice = -1;
                 }
                 else if (GuestMenuChoice == 3){
-                    drawHow2Play();
+                    drawLeaderboard();
+                    _getch();
                     clearScreen();
                     GuestMenuChoice = -1;
                 }
                 else if (GuestMenuChoice == 4){
+                    drawCredit();
+                    _getch();
+                    clearScreen();
+                    GuestMenuChoice = -1;
+                }
+                else if (GuestMenuChoice == 5){
                     GuestMenuChoice = GuestMenuSelecting = -1;
                     GameMenuChoice = -1;
                     GameMenuSelecting = -1;

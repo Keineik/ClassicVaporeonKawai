@@ -104,10 +104,8 @@ bool validateColandRow(int M, int N);
 void drawCustomnizeMenu();
 
 void drawLeaderboardandHighScore();
-
-
+void drawLeaderboard();
 void drawNormalMenu(int MenuSelecting, int MenuSize, menu Menu[]);
-
 void drawSaveLoadMenu();
 void navigateMenu(int &MenuSelecting, int &MenuChoice, int MenuSize);
 void showGameMenu();
