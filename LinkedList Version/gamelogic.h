@@ -1,4 +1,6 @@
 #include "header.h"
+using namespace std;
+
 
 struct Node {
     int data = 0;

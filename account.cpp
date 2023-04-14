@@ -210,7 +210,30 @@ void updateLeaderboard() {
 }
 
 // hacking interactions
+// hacking interactions
+bool isValidDate(Date date) {
+    const int MAX_VALID_YR = 9999;
+    const int MIN_VALID_YR = 1;
+    if (date.yy < MIN_VALID_YR || date.yy > MAX_VALID_YR) return false;
+    if (date.mm < 1 || date.mm > 12) return false;
+    if (date.dd < 1 || date.dd > 31) return false;
+
+    if (date.mm == 2) {
+        if (((date.yy % 4 == 0) && (date.yy % 100 != 0)) || (date.yy % 400 == 0))
+            return date.dd <= 29;
+        else return date.dd <= 28;
+    }
+    if (date.mm == 4 || date.mm == 6 || date.mm == 9 || date.mm == 11)
+        return (date.dd <= 30);
+
+    return true;
+}
+
 void hackState(int slot, int level, int points, int time, Date date) {
+    if (!(level >= 1 && level <= 5)) return;
+    if (time < 0) return;
+    if (!isValidDate(date)) return;
+
     for (auto &user: saves) {
         if (strcmp(user.name, currentSave.name) == 0) {
             user.state[slot].level = level;
@@ -234,6 +257,8 @@ void hackState(int slot, int level, int points, int time, Date date) {
 }
 
 void hackRecord(int slot, Date date, int points) {
+    if (!isValidDate(date)) return;
+
     for (auto &user: saves) {
         if (strcmp(user.name, currentSave.name) == 0) {
             user.record[slot].date = date;
@@ -249,3 +274,5 @@ void hackRecord(int slot, Date date, int points) {
         }
     }
 }
+
+

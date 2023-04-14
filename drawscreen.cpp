@@ -1121,67 +1121,91 @@ void drawBackground(char **background,int backw, int backh, int backgroundx, int
 // Draw Game status on the screen when first enter play()
 void drawHUD(){
     SetColor(15);
-    gotoxy(offsetx,offsety + height + 3); cout <<"Time left: " << setw(3) << setfill(' ') << right << timeRemain;
-    gotoxy(offsetx,offsety + height + 5); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
-    gotoxy(offsetx,offsety + height + 6); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
-    gotoxy(offsetx,offsety + height + 8); cout << "Score: "     << setw(7) << setfill(' ') << right << score;
-    gotoxy(offsetx,offsety + height + 9); cout << "Streak: "    << setw(6) << setfill(' ') << right << streak;
+    hudx = offsetx + width + 1;
+    hudy = offsety;
+    drawBox(hudx, hudy, 40, height, 6," ");
+    SetColor(15);
+    gotoxy(hudx + 2,hudy + 2); cout <<"Level: " << setw(10) << setfill(' ') << right << Level;
+    gotoxy(hudx + 2,hudy + 4); cout << "Score: "     << setw(10) << setfill(' ') << right << score;
+    gotoxy(hudx + 2,hudy + 6); cout << "Streak: "    << setw(9) << setfill(' ') << right << streak;
+    gotoxy(hudx + 2, hudy + 8); cout << "Streak time remain: ";
+    drawBoxOnly(hudx + 9, hudy + 10, 16, 2, 15, " ");
+    gotoxy(hudx + 10, hudy + 11); SetColor(4*16+10); cout << setw(15) << setfill(' ') << right << StreakTimeBar;
+    SetColor(6);
+    drawBar(hudx, hudx + 40, 13);
+    gotoxy(hudx, hudy + 13); cout << char(204);
+    gotoxy(hudx + 40, hudy + 13); cout << char(185);
+    SetColor(15);
+    gotoxy(hudx + 2, hudy + 15);
+    cout << "Move :";
+    drawCell(hudx + 4, hudy + 20,4,2,15*16,'A'); drawCell(hudx + 9,hudy + 17,4,2,15*16,'W'); drawCell(hudx + 9,hudy + 20,4,2,15*16,'S'); drawCell(hudx + 14 , hudy + 20,4,2,15*16,'D');
+    drawCell(hudx+ 20, hudy + 20,4,2,15*16,'<'); drawCell(hudx + 25, hudy + 17,4,2,15*16,'^'); drawCell(hudx + 25, hudy + 20 ,4,2,15*16,'v'); drawCell(hudx + 30, hudy + 20,4,2,15*16,'>');
+    gotoxy(hudx + 2,hudy+25);
+    SetColor(15);
+    cout << "Select:"; drawBox(hudx+10, hudy + 27,20,2,15*16,"     SPACEBAR     ");
+    SetColor(15);
+    gotoxy(hudx+2, hudy + 33);
+    cout << "Save and return to menu: "; drawCell(hudx + 28, hudy + 32,w,h,15*16, 'M');
+    SetColor(15);
+    gotoxy(hudx+2, hudy + 37);
+    cout << "Hint( costs 200 scores): "; drawCell(hudx + 28, hudy + 36,w,h,15*16, 'H');
+    drawBoxOnly(offsetx + 10,offsety + height + 5, 121,3,15," ");
+    gotoxy(offsetx + 11,offsety + height + 6); SetColor(4*16+10); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
+    gotoxy(offsetx + 11,offsety + height + 7); SetColor(4*16+10); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
+    drawBox(offsetx + 10, offsety + height + 2, 20, 2, 15*16, "    Game Timer    ");
 
 }
 void initializeTimeBar(){
-    for (int i = 1; i < timeRemain / 3 - 1; i++){
-        UpperTimeBar[i] = LowerTimeBar[i] = char(205);
+    for (int i = 0; i < timeRemain/3; i++){
+        UpperTimeBar[i] = LowerTimeBar[i] = char(219);
     }
-    UpperTimeBar[timeRemain / 3] = LowerTimeBar[timeRemain / 3] = '\0';
-    UpperTimeBar[0] = char(201);
-    LowerTimeBar[0] = char(200);
-    UpperTimeBar[timeRemain/3 - 1] = char(187);
-    LowerTimeBar[timeRemain/3 - 1] = char(188);
+    UpperTimeBar[timeRemain/3 + 1] = LowerTimeBar[timeRemain/3 + 1] = '\0';
+}
+
+void initializeStreakTimeBar(){
+    for (int i = 0; i < streakTimeRemain/2; i++){
+        StreakTimeBar[i] = char(219);
+    }
+    StreakTimeBar[streakTimeRemain/2 + 1] = '\0';
 }
 // display time and Game status during gameplay
 void displayTimeAndStatus(){
     miliseconds -= tick;
-    // Sleep for 40 milisecond;
+    // Sleep for tick milisecond;
     if (miliseconds == 0){
         if (streakTimeRemain > 0){
             streakTimeRemain --;
+            if (streakTimeRemain % 2 == 0){
+                StreakTimeBar[streakTimeRemain/2 + 1] =  '\0';
+            }
         }
         timeRemain --;
         if (timeRemain % 3 == 0){
-            UpperTimeBar[timeRemain / 3] = LowerTimeBar[timeRemain / 3] = '\0';
-            UpperTimeBar[timeRemain/3 - 1] = char(187);
-            LowerTimeBar[timeRemain/3 - 1] = char(188);
+            UpperTimeBar[timeRemain/3 + 1] = LowerTimeBar[timeRemain/3 + 1] = '\0';
+        }
 
-        }
-        SetColor(15);
-        gotoxy(offsetx,offsety + height + 3); cout <<"Time left: " << setw(3) << setfill(' ') << right << timeRemain;
-        gotoxy(offsetx,offsety + height + 5); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
-        gotoxy(offsetx,offsety + height + 6); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
-        gotoxy(offsetx,offsety + height + 8); cout << "Score: "     << setw(7) << setfill(' ') << right << score;
-        gotoxy(offsetx,offsety + height + 9); cout << "Streak: "    << setw(6) << setfill(' ') << right << streak;
-        if (streak > 0){
-            gotoxy(offsetx + 15 , offsety + height + 9); cout << "Streak resets after: " << setw(2)<< right << streakTimeRemain;
-        }
-        else{
-            gotoxy(offsetx + 15 , offsety + height + 9); cout << "                                       ";
-
-        }
-        if (score >= 200) {
-            gotoxy(offsetx, offsety + height + 10); cout << "Press H(Hint) for 200 scores";
-        }
-        else
-        {
-            gotoxy(offsetx , offsety +  height + 10); cout << "                             ";
-        }
         miliseconds = 1000;
     }
+    SetColor(15);
+    gotoxy(hudx + 2,hudy + 4); cout << "Score: "     << setw(10) << setfill(' ') << right << score;
+    gotoxy(hudx + 2,hudy + 6); cout << "Streak: "    << setw(9) << setfill(' ') << right << streak;
+    gotoxy(offsetx + 11,offsety + height + 6); SetColor(4*16+10); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
+    gotoxy(offsetx + 11,offsety + height + 7); SetColor(4*16+10); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
+    if (streakTimeRemain > 0){
+        gotoxy(hudx + 10, hudy + 11); SetColor(4*16+10); cout << setw(15) << setfill(' ') << right << StreakTimeBar;
+    }
+    else
+    {
+        gotoxy(hudx + 10, hudy + 11); SetColor(15); cout << setw(15) << setfill(' ') << right << " ";
+    }
+    Sleep(tick);
 }
 
 // this sub-function belongs to drawCustomizeMenu()
 bool validateColandRow(int M, int N){
     return (M*N != 0 && M*N <= 8*16 && M*N %2 == 0);
 }
-
+// Interactive customize Menu
 void drawCustomnizeMenu(){
     int minM, maxM, selectingM, minN, maxN, selectingN, menuOption, menuSelecting, finishCustom = false;
     selectingM = selectingN = minN = minM = 2;
@@ -1266,7 +1290,7 @@ void drawCustomnizeMenu(){
     }
 
 }
-
+// Draw Leaderboard and Highscore
 void drawLeaderboardandHighScore(){
     int x = offsetx + (width - 80)/2;
     int y = offsety;
@@ -1334,7 +1358,7 @@ void drawLeaderboardandHighScore(){
 
 }
 
-// This function take menu - arrays of string variables
+// This function take menu - arrays of string variables and its size to draw onto the console
 void drawNormalMenu(int MenuSelecting, int MenuSize, menu Menu[]){
     int x = offsetx + (width - 20) / 2;
     int y = offsety+(height - MenuSize*(2+1))/2;
@@ -1348,7 +1372,7 @@ void drawNormalMenu(int MenuSelecting, int MenuSize, menu Menu[]){
 
 
 }
-
+// Save load menu or Slot menu is different, it indicates whether a slot is occupied
 void drawSaveLoadMenu(){
     int x = offsetx + (width - 20) / 2;
     int y = offsety + (height - size(SlotMenu)*(2+1))/2;
@@ -1382,6 +1406,7 @@ void drawSaveLoadMenu(){
 
 }
 
+// Get the input key from the user to change the menu
 void navigateMenu(int &MenuSelecting, int &MenuChoice, int MenuSize){
     switch(_getch()){
         case KEY_UP: case 'w':
@@ -1414,6 +1439,7 @@ void navigateMenu(int &MenuSelecting, int &MenuChoice, int MenuSize){
         }
 }
 
+// Show different kinds of menu, each has their own conditions
 void showGameMenu(){
     while(GameMenuChoice == -1){
         drawNormalMenu(GameMenuSelecting,size(GameMenu),GameMenu);
@@ -1527,6 +1553,8 @@ void showLoadMenu(){
 
 
 }
+
+// saveFile hacking interactive console
 void drawHackingConsole(){
     int isHacking = 0;
     SetColor(10);
@@ -1538,6 +1566,7 @@ void drawHackingConsole(){
     gotoxy(x,y);
     SetColor(10);
     cout << "Enter the code or M only to exit";
+    gotoxy(x, y+3);
     drawBox(x,y+1,30,2,10," ");
     char c;
     gotoxy(x+1,(y+1)+(2/2));
@@ -1563,30 +1592,40 @@ void drawHackingConsole(){
             }
         }
         if (strcmp(code,"m") == 0)
-            break;
+            return;
     }
-    false;
     if (strcmp(code,"22clcxisgoat")==0){
         int slot, level, points, time;
         Date date;
-        isHacking = 1;
+        isHacking = -1;
         clearScreen();
-        SlotMenuChoice = -1;
-        SlotMenuSelecting = 0;
         x = offsetx + (width - 20) / 2;
-        y = offsety + (height - (size(SlotMenu)-1)*(2+1))/2;
-        while(isHacking == 1){
-            drawSaveLoadMenu();
-            navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
-            if (SlotMenuChoice == size(SlotMenu) - 1){
-                break;
-            }
-            else if (currentSave.state[SlotMenuChoice].p != 0){
-                slot =  SlotMenuChoice;
-                isHacking = 2;
-            }
+        y = offsety + (height - (3*3))/2;
+        int curHack = 0;
+        while(isHacking == -1){
+            drawBox(x,y,20,2,(curHack == 0? 10*16: 10), "Hack save slot");
+            drawBox(x,y+3,20,2,(curHack == 1? 10*16:10), "Hack record");
+            drawBox(x,y+6,20,2,(curHack == 2? 10*16:10),"Return to menu");
+            navigateMenu(curHack,isHacking,3);
         }
-        if (isHacking == 2){
+        if (isHacking == 2 )
+            return;
+        if (isHacking == 0){
+            SlotMenuChoice = -1;
+            SlotMenuSelecting = 0;
+            x = offsetx + (width - 20) / 2;
+            y = offsety + (height - (size(SlotMenu)-1)*(2+1))/2;
+            while(true){
+                drawSaveLoadMenu();
+                navigateMenu(SlotMenuSelecting,SlotMenuChoice,size(SlotMenu));
+                if (SlotMenuChoice == size(SlotMenu) - 1){
+                    return;
+                }
+                else if (currentSave.state[SlotMenuChoice].p != 0){
+                    slot =  SlotMenuChoice;
+                    break;
+                }
+            }
             x = offsetx + (width - 30)/2;
             y = offsety + 10;
             drawBox(x-1,y,30,15,6*16," ");
@@ -1607,14 +1646,21 @@ void drawHackingConsole(){
             char choice, temp; // temp to discard slash
             gotoxy(x,y);
             SetColor(10);
-            cout << "Type your disired new value: "<< endl;
+            cout << "Type your desired new value: "<< endl;
             cout << "Change date ? Y/n: "; cin  >> choice;
             if (tolower(choice) == 'y'){
                 cout << "New date value(dd/mm/yyyy): "; cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
+                while(!isValidDate(date)){
+                    cout << "Invalid date! Max is 31/12/9999, min is 01/01/0001" << endl; cout << "Please retype (dd/mm/yyyy): ";
+                    cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
+                }
             }
-            cout << "Change level? Y/n: "; cin >> choice;
+            cout << "Change level (1-5)? Y/n: "; cin >> choice;
             if (tolower(choice) == 'y'){
                 cout << "New level value: "; cin >> level;
+                while (level > 5 || level < 0){
+                    cout << "Invalid level!! Please choose 1-5: "; cin >> level;
+                }
             }
 
             cout << "Change points? Y/n: "; cin >> choice;
@@ -1626,8 +1672,33 @@ void drawHackingConsole(){
                 cout << "New time left value:"; cin >> time;
             }
             hackState(slot,level,points,time,date);
+            writeBinFile();
+            writeLeaderboardFile();
+        }
+        else if (isHacking = 1){
+            drawLeaderboardandHighScore();
+            gotoxy(0,30);
+            char temp;
+            SetColor(10);
+            cout << "Choose slot to (1-5): "; cin >> slot;
+            while (slot < 0 || slot > 5){
+                cout << "Invalid slot!!! \n Please choose slot tobetween 1 and 5: "; cin >> slot;
+            }
+            cout << "Type your desired new record: "<< endl;
+            cout << "Date value(dd/mm/yyyy): "; cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
+            while(!isValidDate(date)){
+                    cout << "Invalid date! Max is 31/12/9999, min is 01/01/0001" << endl; cout << "Please retype (dd/mm/yyyy): ";
+                    cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
+                }
+            cout << "Points value:"; cin >> points;
             hackRecord(slot,date,points);
+            writeBinFile();
+            writeLeaderboardFile();
+            return;
+
         }
     }
+
     ShowConsoleCursor(FALSE);
 }
+

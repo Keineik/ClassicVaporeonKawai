@@ -5,7 +5,7 @@
 #include <mmsystem.h>
 #include <conio.h>
 #include <iomanip>
-
+#define ImageDir "./assets/txtimage/"
 
 #define WindowW 1200
 #define WindowH 900
@@ -80,11 +80,11 @@ pair<int, int> &p1 = game.p1, &p2 = game.p2, &choosing = game. choosing, &oldcho
 int &timeRemain = game.timeRemain, &streakTimeRemain = game.streakTimeRemain, &streak = game.streak, &score = game.score;
 char *background_file = game.background_file;
 
-int tick = 40, maxstreak = 3, streakscore = 100, miliseconds = 1000;
+int tick = 20, maxstreak = 3, streakscore = 100, miliseconds = 1000;
 
 bool halfpair = false, endgame = false, entermainmenu = true, newAccount = false, successLogin = false;
-int width = 120, height = 40, offsetx, offsety, backgroundx, backgroundy;
-int boardposx = 0, boardposy = 0;
+int width = 100, height = 40, offsetx, offsety, backgroundx, backgroundy;
+int boardposx = 0, boardposy = 0, hudx, hudy;
 int w = 4, h = 2; // width & height of board 's cells
 int backw = 0, backh = 0;
 char **background;

@@ -21,7 +21,8 @@ void updateBoard(int **board, int boardposx, int boardposy, pair<int,int> &p1, p
         }
         else if (isLegalMove(p1, p2)) {
             updateScore();
-            streakTimeRemain = 15;
+            streakTimeRemain = 30;
+            initializeStreakTimeBar();
             board[p1.first][p1.second] = board[p2.first][p2.second] = blankspace;
             drawPath(path,boardposx,boardposy);
             Sleep(100);
@@ -130,6 +131,7 @@ void keyInput_Play(){
             {
                 stopPlay = true;
                 GuestMenuChoice = -1;
+                SetColor(6);
                 deleteBoard();
                 clearScreen();
             }
@@ -168,11 +170,12 @@ void keyInput_Play(){
 // GAMEPLAY FUNCTION
 void play() {
         offsety = 0;
+        offsetx = 0;
         stopPlay = false;
         halfpair = false;
         initializeTimeBar();
         initializeBackground(background, backw, backh,backgroundx,backgroundy, "./assets/txtimages/amongustwerk_allwhite.txt");
-       // PlaySound(TEXT("C:/Users/W.Long/Downloads/Megalovania.wav"),NULL, SND_ASYNC | SND_LOOP);
+        PlaySound(TEXT("C:/Users/W.Long/Downloads/Megalovania.wav"),NULL, SND_ASYNC | SND_LOOP);
         drawBox(offsetx, offsety, width, height,6," ");
         drawBackground(background,backw,backh,backgroundx,backgroundy);
         boardposx = calculateBoardPosX();
@@ -211,7 +214,6 @@ void play() {
                     updateLeaderboard();
                     stopPlay = true;
                     deleteBoard();
-
                 }
             }
             else if (timeRemain > 0){
@@ -223,9 +225,8 @@ void play() {
                         shuffle();
                     Sleep(50);
                     SetColor(6);
-                    clearCanvas(offsetx, offsety, width - 2, height - 2);
+                    clearCanvas(offsetx+1, offsety+1, width - 2, height - 2);
                     drawHUD();
-                    drawBox(offsetx,offsety,width,height,6," ");
                     drawBackground(background,backw,backh,backgroundx,backgroundy);
                     printBoard();
 
@@ -234,7 +235,7 @@ void play() {
                     keyInput_Play();
                     updateBoard(board,boardposx,boardposy,p1,p2,choosing,oldchoosing,score);
                     }
-                Sleep(tick);
+
             }
             else{
                 drawBox(offsetx + (width - 60) / 2, offsety + (height - 4) / 2,60,4, 4, "Skill issues detected!! Press R to replay or M to quit");
@@ -245,7 +246,7 @@ void play() {
                         deleteBoard();
                         initializeBoard();
                         SetColor(6);
-                        clearCanvas(offsetx, offsety, width - 2, height - 2);
+                        clearCanvas(offsetx+1, offsety+1, width - 2, height - 2);
                         choosing = {1,1};
                         Sleep(20);
                         stopPlay = false;
@@ -277,14 +278,14 @@ int main () {
 
     while (!endgame) {
         if (GameMenuChoice == -1 || stopPlay )
-          //  PlaySound(TEXT("C:/Users/W.Long/Downloads/Gigachad.wav"),NULL, SND_ASYNC | SND_LOOP);
+        PlaySound(TEXT("C:/Users/W.Long/Downloads/Gigachad.wav"),NULL, SND_ASYNC | SND_LOOP);
         offsetx = (ConsoleCol - width) / 2 ;
         offsety = 3;
         if (GameMenuChoice == -1){
              if(entermainmenu){
-                drawImage(offsetx + 11, offsety ,"./assets/txtimages/title.txt");
-                drawImage(offsetx - 5, offsety + 20,"./assets/txtimages/pikachu.txt");
-                drawImage(offsetx + 80,offsety + 17,"./assets/txtimages/vaporeon.txt");
+                drawImage(offsetx + 5, offsety ,"./assets/txtimages/title.txt");
+                drawImage(offsetx - 10, offsety + 20,"./assets/txtimages/pikachu.txt");
+                drawImage(offsetx + 75,offsety + 17,"./assets/txtimages/vaporeon.txt");
                 entermainmenu = false;
             }
             showGameMenu();
@@ -389,6 +390,7 @@ int main () {
                     drawHackingConsole();
                     SetColor(6);
                     clearScreen();
+                    ShowConsoleCursor(FALSE);
                     LoginMenuChoice = -1;
                 }
             }
@@ -453,6 +455,7 @@ int main () {
                     stopPlay = false;
                     Level = 1;
                     play();
+                    SetColor(6);
                     GuestMenuChoice = -1;
                     GuestMenuSelecting = 0;
                 }

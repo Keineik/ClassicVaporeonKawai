@@ -5,8 +5,9 @@
 #define ENTER '\r'
 #define SPACE ' '
 #define BACKSPACE 8
-char UpperTimeBar[121] = {};
-char LowerTimeBar[121] = {};
+char UpperTimeBar[125] = {};
+char LowerTimeBar[125] = {};
+char StreakTimeBar[20] = {};
 // Set console pointer to coordinator (x,y)
 void gotoxy(int x, int y);
 
@@ -94,6 +95,7 @@ void drawBackground(char **background,int backw, int backh, int backgroundx, int
 // Draw Game status on the screen when first enter play()
 void drawHUD();
 void initializeTimeBar();
+void initializeStreakTimeBar();
 // display time and Game status during gameplay
 void displayTimeAndStatus();
 
@@ -114,3 +116,4 @@ void showGuestMenu();
 void showSaveMenu();
 void showLoadMenu();
 void drawHackingConsole();
+void drawCredit();
