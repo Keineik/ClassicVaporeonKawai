@@ -1,0 +1,53 @@
+
+Game open:
+
+Login (0): // Have load game, save game, new game, 
+Draw Login form;
+if (isLogin())
+	Menu_Login;
+Menu_login:
+New Game (0):
+	*This choice erases your recent data and start a new game*
+Load Game (1):
+	*This choice overwrite your recent data with your current play*
+Custom Game (2):
+	Enter Customize Menu:
+		Numbers of Rows:
+		Numbers of Columns:
+Audio Setting(3):
+	Sfx: On / Off
+	Menu Music: On / Off
+	In-game Music: On / Off
+How to play (4):
+	Draw How To Play
+Leaderboard (5):
+	Draw LeaderBoard
+Credit (6):
+	Draw Credit:
+Log out(7):
+
+Signup (1): 
+Draw Signup form;
+if (is_SignUp())
+	cout << "Return and Login";
+	
+Play as guest (2): // No load game, no save game
+draw Menu_Guest:
+	Enter your in-game name:
+Draw Menu_Guest:
+New Game (0):
+	*Start new game*
+Custom Game(1):
+	Enter Customize Menu:
+		Numbers of Rows:
+		Numbers of Columns:
+Audio Setting(2):
+	Sfx: On / Off
+	Menu Music: On / Off
+	In-game Music: On / Off
+How to play (3):
+	Draw how to play
+Credit (4):
+	Draw Credit
+Main Menu(5):
+	*Your Process isn't going to be saved! Continue ? Press Y (Yes) / N(No)*
