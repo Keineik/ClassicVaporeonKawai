@@ -108,15 +108,15 @@ void drawBox(int x, int y, int w, int h, int color, string s){
 
     for (int i = x; i<= x+w; i++){
         gotoxy(i,y);
-        cout <<char(205);
+        cout <<(unsigned char)(205);
         gotoxy(i, y+h);
-        cout << char(205);
+        cout << (unsigned char)(205);
     }
     for (int i = y; i <= y + h; i++){
         gotoxy(x,i);
-        cout << char(186);
+        cout << (unsigned char)(186);
         gotoxy(x+w,i);
-        cout << char(186);
+        cout << (unsigned char)(186);
     }
 
     for (int i = x+1 ; i < x+w; i++){
@@ -128,10 +128,10 @@ void drawBox(int x, int y, int w, int h, int color, string s){
     gotoxy(x+2, y+h/2); cout << s;
 
 
-    gotoxy(x,y); cout << char(201);
-    gotoxy(x+w,y); cout << char(187);
-    gotoxy(x,y+h); cout << char(200);
-    gotoxy(x+w,y+h); cout << char(188);
+    gotoxy(x,y); cout << (unsigned char)(201);
+    gotoxy(x+w,y); cout << (unsigned char)(187);
+    gotoxy(x,y+h); cout << (unsigned char)(200);
+    gotoxy(x+w,y+h); cout << (unsigned char)(188);
 
 }
 // Draw empty box
@@ -141,21 +141,21 @@ void drawBoxOnly(int x, int y, int w, int h, int color, string s){
 
     for (int i = x; i<= x+w; i++){
         gotoxy(i,y);
-        cout <<char(205);
+        cout <<(unsigned char)(205);
         gotoxy(i, y+h);
-        cout << char(205);
+        cout << (unsigned char)(205);
     }
     for (int i = y; i <= y + h; i++){
         gotoxy(x,i);
-        cout << char(186);
+        cout << (unsigned char)(186);
         gotoxy(x+w,i);
-        cout << char(186);
+        cout << (unsigned char)(186);
     }
     gotoxy(x+2, y+h/2); cout << s;
-    gotoxy(x,y); cout << char(201);
-    gotoxy(x+w,y); cout << char(187);
-    gotoxy(x,y+h); cout << char(200);
-    gotoxy(x+w,y+h); cout << char(188);
+    gotoxy(x,y); cout << (unsigned char)(201);
+    gotoxy(x+w,y); cout << (unsigned char)(187);
+    gotoxy(x,y+h); cout << (unsigned char)(200);
+    gotoxy(x+w,y+h); cout << (unsigned char)(188);
 
 }
 // Draw cell, actually the same functions with draw box, but I seperate into two different functions for easy code read
@@ -163,15 +163,15 @@ void drawCell(int x, int y, int w, int h, int color, char c){
     SetColor(color);
     for (int i = x; i<= x+w; i++){
         gotoxy(i,y);
-        cout <<char(196);
+        cout <<(unsigned char)(196);
         gotoxy(i, y+h);
-        cout << char(196);
+        cout << (unsigned char)(196);
     }
     for (int i = y; i < y + h; i++){
         gotoxy(x,i);
-        cout << char(179);
+        cout << (unsigned char)(179);
         gotoxy(x+w,i);
-        cout << char(179);
+        cout << (unsigned char)(179);
     }
     for (int i = x+1 ; i < x+w; i++){
         for (int j = y+1; j < y+h; j++){
@@ -180,10 +180,10 @@ void drawCell(int x, int y, int w, int h, int color, char c){
         }
     }
     gotoxy(x+ 2, y+h/2); cout << c;
-    gotoxy(x,y); cout << char(218);
-    gotoxy(x+w,y); cout << char(191);
-    gotoxy(x,y+h); cout << char(192);
-    gotoxy(x+w,y+h); cout << char(217);
+    gotoxy(x,y); cout << (unsigned char)(218);
+    gotoxy(x+w,y); cout << (unsigned char)(191);
+    gotoxy(x,y+h); cout << (unsigned char)(192);
+    gotoxy(x+w,y+h); cout << (unsigned char)(217);
 
 }
 // Draw menu
@@ -402,9 +402,9 @@ void drawHow2Play(){
         drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2 - 1, offsety + 12 + h/2);
         drawColumn(offsety + 16 + h/2, offsety + 22 + h/2 - 1, offsetx + width/2 + 15 + w/2);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 12 + h/2);
-        cout << char(200);
+        cout << (unsigned char)(200);
         gotoxy(offsetx + width/2 + 15 + w/2,offsety + 16 + h/2);
-        cout << char(187);
+        cout << (unsigned char)(187);
         Sleep(1000);
         clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
         drawCell(offsetx + width/2 + 5, offsety + 6, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 6, w,h, 6, 'A');
@@ -418,9 +418,9 @@ void drawHow2Play(){
         drawColumn(offsety + 6 + h/2 + 1, offsety + 12 + h/2, offsetx + width/2 + 15 + w/2);
         drawBar(offsetx + width/2 + 5 + w/2 + 1, offsetx + width/2 + 15 + w/2 - 1, offsety + 16 + h/2);
         gotoxy(offsetx + width/2 + 15 + w/2,offsety + 12 + h/2);
-        cout << char(188);
+        cout << (unsigned char)(188);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 16 + h/2);
-        cout << char(201);
+        cout << (unsigned char)(201);
         Sleep(1000);
         clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
         drawCell(offsetx + width/2 + 5, offsety + 10, w,h, 6, 'A'); drawCell(offsetx + width/2 + 10, offsety + 10, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 10, w,h, 6, 'A');
@@ -434,16 +434,16 @@ void drawHow2Play(){
         drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2, offsety + 6 + h/2);
         drawColumn(offsety + 16 + h/2, offsety + 22 + h/2, offsetx + width/2 + 5 + w/2);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 6 + h/2);
-        cout << char(201);
+        cout << (unsigned char)(201);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 16 + h/2);
-        cout << char(201);
+        cout << (unsigned char)(201);
         Sleep(500);
         drawColumn(offsety + 6 + h/2, offsety + 10 + h/2 - 1, offsetx + width/2 + 15 + w/2);
         drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 10 + w/2 - 1, offsety + 22 + h/2);
         gotoxy(offsetx + width/2 + 15 + w/2,offsety + 6 + h/2);
-        cout << char(187);
+        cout << (unsigned char)(187);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 22 + h/2);
-        cout << char(200);
+        cout << (unsigned char)(200);
         Sleep(1000);
         clearCanvas(offsetx + width/2 + 5, offsety + 6,20,20);
         drawCell(offsetx + width/2 + 5, offsety + 6, w,h, 6, 'B'); drawCell(offsetx + width/2 + 15, offsety + 6, w,h, 6, 'A');
@@ -457,16 +457,16 @@ void drawHow2Play(){
         drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2, offsety + 9 + h/2);
         drawBar(offsetx + width/2 + 5 + w/2, offsetx + width/2 + 15 + w/2, offsety + 19 + h/2);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 9 + h/2);
-        cout << char(201);
+        cout << (unsigned char)(201);
         gotoxy(offsetx + width/2 + 5 + w/2,offsety + 19 + h/2);
-        cout << char(200);
+        cout << (unsigned char)(200);
         Sleep(500);
         drawColumn(offsety + 6 + h/2+1, offsety + 9 + h/2 , offsetx + width/2 + 15 + w/2);
         drawColumn(offsety + 22 + h/2-1, offsety + 19 + h/2 , offsetx + width/2 + 15 + w/2);
         gotoxy(offsetx + width/2 + 15 + w/2,offsety + 9 + h/2);
-        cout << char(188);
+        cout << (unsigned char)(188);
         gotoxy(offsetx + width/2 + 15 + w/2,offsety + 19 + h/2);
-        cout << char(187);
+        cout << (unsigned char)(187);
         gotoxy(offsetx +  width/2 - 30, offsety + height - 5);
         SetColor(6);
         cout << "PRESS R TO REWATCH M TO RETURN TO MENU";
@@ -548,7 +548,7 @@ void drawBar(int startx, int endx, int posy){
     if (startx > endx) swap(startx,endx);
     for (int i =  startx; i <= endx; i++){
                 gotoxy(i,posy);
-                cout << char(205);
+                cout << (unsigned char)(205);
             }
 }
 
@@ -556,7 +556,7 @@ void drawColumn(int starty, int endy, int posx){
     if (starty > endy) swap(starty,endy);
     for (int i =  starty; i <= endy; i++){
                 gotoxy(posx,i);
-                cout << char(186);
+                cout << (unsigned char)(186);
             }
 }
 // Draw legal move from vector paths
@@ -594,7 +594,7 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
             drawBar(startx,middlex,middley);
             drawColumn(middley,endy,middlex);
             gotoxy(middlex,middley);
-            cout << char((path[1].first < path[0].first) ? 187: 188);
+            cout << (unsigned char)((path[1].first < path[0].first) ? 187: 188);
 
         }
         else
@@ -606,7 +606,7 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
             drawColumn(starty,middley,middlex);
             drawBar(middlex,endx,middley);
             gotoxy(middlex,middley);
-            cout << char((path[1].first < path[2].first) ? 201: 200);
+            cout << (unsigned char)((path[1].first < path[2].first) ? 201: 200);
         }
 
     }
@@ -629,12 +629,12 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawBar(middlex1,middlex2,middley);
                 drawColumn(endy,middley,middlex1);
                 if(path[1].second < path[2].second){
-                    gotoxy(middlex1,middley);cout << char(200);
-                    gotoxy(middlex2,middley);cout << char(188);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(200);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(188);
                 }
                 else{
-                    gotoxy(middlex2,middley);cout << char(200);
-                    gotoxy(middlex1,middley);cout << char(188);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(200);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(188);
                 }
 
             }
@@ -653,12 +653,12 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawBar(middlex2,middlex1,middley);
                 drawColumn(middley,endy,middlex1);
                 if(path[1].second < path[2].second){
-                    gotoxy(middlex1,middley);cout << char(201);
-                    gotoxy(middlex2,middley);cout << char(187);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(201);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(187);
                 }
                 else{
-                    gotoxy(middlex2,middley);cout << char(201);
-                    gotoxy(middlex1,middley);cout << char(187);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(201);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(187);
                 }
             }
             if (path[0].first < path[1].first && path[3].first > path[2].first){
@@ -677,12 +677,12 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawBar(middlex2,middlex1,middley);
                 drawColumn(endy,middley,middlex1);
                 if(path[1].second < path[2].second){
-                    gotoxy(middlex1,middley);cout << char(200);
-                    gotoxy(middlex2,middley);cout << char(187);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(200);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(187);
                 }
                 else{
-                    gotoxy(middlex2,middley);cout << char(201);
-                    gotoxy(middlex1,middley);cout << char(188);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(201);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(188);
                 }
             }
             if (path[0].first > path[1].first && path[3].first < path[2].first){
@@ -701,12 +701,12 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawBar(middlex2,middlex1,middley);
                 drawColumn(middley,endy,middlex1);
                 if(path[1].second > path[2].second){
-                    gotoxy(middlex1,middley);cout << char(200);
-                    gotoxy(middlex2,middley);cout << char(187);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(200);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(187);
                 }
                 else{
-                    gotoxy(middlex2,middley);cout << char(201);
-                    gotoxy(middlex1,middley);cout << char(188);
+                    gotoxy(middlex2,middley);cout << (unsigned char)(201);
+                    gotoxy(middlex1,middley);cout << (unsigned char)(188);
                 }
             }
 
@@ -727,13 +727,13 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawColumn(middley2,middley1,middlex);
                 drawBar(endx,middlex,middley1);
                 if (path[2].first < path[1].first){
-                    gotoxy(middlex,middley2); cout<<char(187);
-                    gotoxy(middlex,middley1); cout << char(188);
+                    gotoxy(middlex,middley2); cout<<(unsigned char)(187);
+                    gotoxy(middlex,middley1); cout << (unsigned char)(188);
 
                 }
                 else{
-                    gotoxy(middlex,middley1); cout<<char(187);
-                    gotoxy(middlex,middley2); cout << char(188);
+                    gotoxy(middlex,middley1); cout<<(unsigned char)(187);
+                    gotoxy(middlex,middley2); cout << (unsigned char)(188);
                 }
             }
             if (path[0].second > path[1].second && path[3].second > path[2].second){
@@ -753,13 +753,13 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawColumn(middley1,middley2,middlex);
                 drawBar(middlex,endx,middley1);
                 if (path[1].first < path[2].first){
-                    gotoxy(middlex,middley2); cout<<char(200);
-                    gotoxy(middlex,middley1); cout << char(201);
+                    gotoxy(middlex,middley2); cout<<(unsigned char)(200);
+                    gotoxy(middlex,middley1); cout << (unsigned char)(201);
 
                 }
                 else{
-                    gotoxy(middlex,middley1); cout<<char(200);
-                    gotoxy(middlex,middley2); cout << char(201);
+                    gotoxy(middlex,middley1); cout<<(unsigned char)(200);
+                    gotoxy(middlex,middley2); cout << (unsigned char)(201);
                 }
 
             }
@@ -778,13 +778,13 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawColumn(middley2,middley1,middlex);
                 drawBar(middlex,endx,middley1);
                 if (path[2].first < path[1].first){
-                    gotoxy(middlex,middley2); cout<<char(187);
-                    gotoxy(middlex,middley1); cout << char(200);
+                    gotoxy(middlex,middley2); cout<<(unsigned char)(187);
+                    gotoxy(middlex,middley1); cout << (unsigned char)(200);
 
                 }
                 else{
-                    gotoxy(middlex,middley1); cout<<char(201);
-                    gotoxy(middlex,middley2); cout << char(188);
+                    gotoxy(middlex,middley1); cout<<(unsigned char)(201);
+                    gotoxy(middlex,middley2); cout << (unsigned char)(188);
                 }
             }
             if (path[0].second < path[1].second && path[3].second > path[2].second){
@@ -802,13 +802,13 @@ void drawPath(vector<pair<int,int>> path,int boardposx,int boardposy){
                 drawColumn(middley2,middley1,middlex);
                 drawBar(endx,middlex,middley1);
                 if (path[2].first < path[1].first){
-                    gotoxy(middlex,middley2); cout<<char(201);
-                    gotoxy(middlex,middley1); cout << char(188);
+                    gotoxy(middlex,middley2); cout<<(unsigned char)(201);
+                    gotoxy(middlex,middley1); cout << (unsigned char)(188);
 
                 }
                 else{
-                    gotoxy(middlex,middley1); cout<<char(187);
-                    gotoxy(middlex,middley2); cout << char(200);
+                    gotoxy(middlex,middley1); cout<<(unsigned char)(187);
+                    gotoxy(middlex,middley2); cout << (unsigned char)(200);
                 }
             }
         }
@@ -1142,8 +1142,8 @@ void drawHUD(){
     gotoxy(hudx + 10, hudy + 11); SetColor(4*16+10); cout << setw(15) << setfill(' ') << right << StreakTimeBar;
     SetColor(6);
     drawBar(hudx, hudx + 40, 13);
-    gotoxy(hudx, hudy + 13); cout << char(204);
-    gotoxy(hudx + 40, hudy + 13); cout << char(185);
+    gotoxy(hudx, hudy + 13); cout << (unsigned char)(204);
+    gotoxy(hudx + 40, hudy + 13); cout << (unsigned char)(185);
     SetColor(15);
     gotoxy(hudx + 2, hudy + 15);
     cout << "Move :";
@@ -1170,14 +1170,14 @@ void drawHUD(){
 }
 void initializeTimeBar(){
     for (int i = 0; i < timeRemain/3; i++){
-        UpperTimeBar[i] = LowerTimeBar[i] = char(219);
+        UpperTimeBar[i] = LowerTimeBar[i] = (unsigned char)(219);
     }
     UpperTimeBar[timeRemain/3 + 1] = LowerTimeBar[timeRemain/3 + 1] = '\0';
 }
 
 void initializeStreakTimeBar(){
     for (int i = 0; i < streakTimeRemain/2; i++){
-        StreakTimeBar[i] = char(219);
+        StreakTimeBar[i] = (unsigned char)(219);
     }
     StreakTimeBar[streakTimeRemain/2 + 1] = '\0';
 }
@@ -1328,14 +1328,14 @@ void drawLeaderboardandHighScore(){
         i++;
     }
     drawBar(x-2,x+80,y+2);
-    gotoxy(x-2,y+2); cout << char(204);
+    gotoxy(x-2,y+2); cout << (unsigned char)(204);
     gotoxy(x+80,y+2); cout << char (185);
-    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << char(203); gotoxy(x+8,y+15); cout << char(202);
-    drawColumn(y,y+15,x+ 59); gotoxy(x+59,y); cout << char(203); gotoxy(x+59,y+15); cout << char(202);
-    drawColumn(y,y+15,x+ 69); gotoxy(x+69,y); cout << char(203); gotoxy(x+69,y+15); cout << char(202);
-    gotoxy(x+8, y+2); cout << char(206);
-    gotoxy(x+59, y+2); cout << char(206);
-    gotoxy(x+69, y+2); cout << char(206);
+    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << (unsigned char)(203); gotoxy(x+8,y+15); cout << (unsigned char)(202);
+    drawColumn(y,y+15,x+ 59); gotoxy(x+59,y); cout << (unsigned char)(203); gotoxy(x+59,y+15); cout << (unsigned char)(202);
+    drawColumn(y,y+15,x+ 69); gotoxy(x+69,y); cout << (unsigned char)(203); gotoxy(x+69,y+15); cout << (unsigned char)(202);
+    gotoxy(x+8, y+2); cout << (unsigned char)(206);
+    gotoxy(x+59, y+2); cout << (unsigned char)(206);
+    gotoxy(x+69, y+2); cout << (unsigned char)(206);
 
 
     x = offsetx + (width - 30)/2;
@@ -1363,12 +1363,12 @@ void drawLeaderboardandHighScore(){
         i++;
     }
     drawBar(x-2,x+31,y+2);
-    gotoxy(x-2,y+2); cout << char(204);
+    gotoxy(x-2,y+2); cout << (unsigned char)(204);
     gotoxy(x+31,y+2); cout << char (185);
-    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << char(203); gotoxy(x+8,y+15); cout << char(202);
-    drawColumn(y,y+15,x+ 19); gotoxy(x+19,y); cout << char(203); gotoxy(x+19,y+15); cout << char(202);
-    gotoxy(x+8, y+2); cout << char(206);
-    gotoxy(x+19, y+2); cout << char(206);
+    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << (unsigned char)(203); gotoxy(x+8,y+15); cout << (unsigned char)(202);
+    drawColumn(y,y+15,x+ 19); gotoxy(x+19,y); cout << (unsigned char)(203); gotoxy(x+19,y+15); cout << (unsigned char)(202);
+    gotoxy(x+8, y+2); cout << (unsigned char)(206);
+    gotoxy(x+19, y+2); cout << (unsigned char)(206);
     if (LoginMenuChoice == 4)
         drawBox(offsetx + (width - 25) / 2, y + 20, 25,2, 6*16, "PRESS ANY KEY TO EXIT");
 
@@ -1398,14 +1398,14 @@ void drawLeaderboard(){
         i++;
     }
     drawBar(x-2,x+80,y+2);
-    gotoxy(x-2,y+2); cout << char(204);
+    gotoxy(x-2,y+2); cout << (unsigned char)(204);
     gotoxy(x+80,y+2); cout << char (185);
-    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << char(203); gotoxy(x+8,y+15); cout << char(202);
-    drawColumn(y,y+15,x+ 59); gotoxy(x+59,y); cout << char(203); gotoxy(x+59,y+15); cout << char(202);
-    drawColumn(y,y+15,x+ 69); gotoxy(x+69,y); cout << char(203); gotoxy(x+69,y+15); cout << char(202);
-    gotoxy(x+8, y+2); cout << char(206);
-    gotoxy(x+59, y+2); cout << char(206);
-    gotoxy(x+69, y+2); cout << char(206);
+    drawColumn(y,y+15,x+ 8); gotoxy(x+8,y); cout << (unsigned char)(203); gotoxy(x+8,y+15); cout << (unsigned char)(202);
+    drawColumn(y,y+15,x+ 59); gotoxy(x+59,y); cout << (unsigned char)(203); gotoxy(x+59,y+15); cout << (unsigned char)(202);
+    drawColumn(y,y+15,x+ 69); gotoxy(x+69,y); cout << (unsigned char)(203); gotoxy(x+69,y+15); cout << (unsigned char)(202);
+    gotoxy(x+8, y+2); cout << (unsigned char)(206);
+    gotoxy(x+59, y+2); cout << (unsigned char)(206);
+    gotoxy(x+69, y+2); cout << (unsigned char)(206);
     drawBox(offsetx + (width - 25) / 2, y + 20, 25,2, 6*16, "PRESS ANY KEY TO EXIT");
 }
 // This function take menu - arrays of string variables and its size to draw onto the console
@@ -1688,10 +1688,10 @@ void drawHackingConsole(){
             gotoxy(x,y + 8); cout << setw(15) << left << "POINTS" << setw(11) << left << currentSave.state[slot].points;
             gotoxy(x,y + 10); cout << setw(15) << left << "TIME LEFT" << setw(11) << left << currentSave.state[slot].time;
             drawBar(x-1,x+29,y+2);
-            gotoxy(x-1,y+2); cout << char(204);
+            gotoxy(x-1,y+2); cout << (unsigned char)(204);
             gotoxy(x+29,y+2); cout << char (185);
-            drawColumn(y,y+15,x + 14); gotoxy(x+14,y); cout << char(203); gotoxy(x+14,y+15); cout << char(202);
-            gotoxy(x+14, y+2); cout << char(206);
+            drawColumn(y,y+15,x + 14); gotoxy(x+14,y); cout << (unsigned char)(203); gotoxy(x+14,y+15); cout << (unsigned char)(202);
+            gotoxy(x+14, y+2); cout << (unsigned char)(206);
             x = 0;
             y += 2;
             char choice, temp; // temp to discard slash
