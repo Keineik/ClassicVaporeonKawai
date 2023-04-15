@@ -1,7 +1,5 @@
 #include "header.h"
 
-vector<pair<int, int>> path;
-
 struct Node {
     int data = 0;
     Node* next = NULL;

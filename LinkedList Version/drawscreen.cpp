@@ -507,7 +507,7 @@ void clearVfx(){
             int starty = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
             int endy = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
             int posx = calculateCellPosX(path[0].second,w,h,boardposx) + w/2;
-            eraseColumn(starty,endy,posx,w,h);
+            eraseColumn( starty,endy,posx,w,h);
 
         }
 
@@ -521,7 +521,7 @@ void clearVfx(){
             int middley = calculateCellPosY(path[1].first,w,h,boardposy) + h/2;
             int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
             eraseBar(startx,middlex,middley,w,h);
-            eraseColumn(middley,endy,middlex,w,h);
+            eraseColumn( middley,endy,middlex,w,h);
 
         }
         else
@@ -551,8 +551,8 @@ void clearVfx(){
                 int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
                 int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
                 eraseColumn(starty,middley,middlex2,w,h);
-                eraseBar(middlex1,middlex2,middley,w,h);
-                eraseColumn(endy,middley,middlex1,w,h);
+                eraseBar( middlex1,middlex2,middley,w,h);
+                eraseColumn( endy,middley,middlex1,w,h);
 
             }
             if (path[0].first > path[1].first && path[3].first > path[2].first){
@@ -566,7 +566,7 @@ void clearVfx(){
                 int middlex2 = calculateCellPosX(path[2].second,w,h,boardposx) + w/2;
                 int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
                 int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
-                eraseColumn(middley,starty,middlex2,w,h);
+                eraseColumn( middley,starty,middlex2,w,h);
                 eraseBar(middlex2,middlex1,middley,w,h);
                 eraseColumn(middley,endy,middlex1,w,h);
             }
@@ -583,8 +583,8 @@ void clearVfx(){
                 int middlex1 = calculateCellPosX(path[1].second,w,h,boardposx) + w/2;
                 int endy = calculateCellPosY(path[0].first,w,h,boardposy) + h/2;
                 eraseColumn(middley,starty,middlex2,w,h);
-                eraseBar(middlex2,middlex1,middley,w,h);
-                eraseColumn(endy,middley,middlex1,w,h);
+                eraseBar( middlex2,middlex1,middley,w,h);
+                eraseColumn( endy,middley,middlex1,w,h);
 
             }
             if (path[0].first > path[1].first && path[3].first < path[2].first){
@@ -674,7 +674,177 @@ void clearVfx(){
 
     }
 }
+void drawNormalMenu(){
+    int x = offsetx + (width - 20) / 2;
+    int y = offsety+(height - size(Menu)*(2+1))/2;
+    for (int i = 0;  i < size(Menu); i++)
+            drawBox(x,y+i*2+i,20,2,(MenuSelecting == i ? 7*16 : 6), Menu[i]);
+}
+void navigateMenu(){
+    switch(_getch()){
+        case KEY_UP: case 'w':
+            if (MenuSelecting <= 0)
+                MenuSelecting = size(Menu) - 1;
+            else
+                MenuSelecting--;
+            break;
+        case KEY_DOWN: case 's':
+            if (MenuSelecting >= size(Menu) - 1)
+                MenuSelecting = 0;
+            else
+                MenuSelecting++;
+            break;
+        case ' ':
+            MenuChoice = MenuSelecting;
+            SetColor(0);
+            clearScreen();
+            break;
+        default:
+            break;
+        }
+}
 
+void showMenu(){
+    while (MenuChoice == -1){
+        drawNormalMenu();
+        navigateMenu();
+    }
+}
+void printBoard() {
+
+    for (int i = 0; i <= M+1; i++) {
+        for (int j = 0; j <=  N+1; j++){
+            if (getData(i,j) != blankspace)
+                if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 13*16 , getData(i,j));
+                else if (choosing.first == i && choosing.second == j)
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15*16 , getData(i,j));
+                else
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(getData(i,j) - 59)/3] , getData(i,j));
+            else{
+                SetColor(7);
+                clearCanvas(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w,h);
+            }
+        }
+    }
+}
+void redrawCol(int j){
+    for (int i = 0; i <= M +1; i++)
+         if (getData(i,j) != blankspace){
+                if (choosing.first == i && choosing.second == j)
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15*16 , getData(i,j));
+                else
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(getData(i,j) - 59)/3] , getData(i,j));
+        }
+        else{
+            SetColor(6);
+            clearCanvas(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w,h);
+
+        }
+}
+
+void redrawRow(int i){
+    for (int j = 0; j <= N+1; j++)
+        if (getData(i,j) != blankspace){
+                if (choosing.first == i && choosing.second == j)
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15*16 , getData(i,j));
+                else
+                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(getData(i,j) - 59)/3] , getData(i,j));
+        }
+        else{
+            SetColor(6);
+            clearCanvas(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w,h);
+
+        }
+}
+bool validateColandRow(int M, int N){
+    return (M*N != 0 && M*N <= 8*16 && M*N %2 == 0);
+}
+// Interactive customize Menu
+void drawCustomnizeMenu(){
+    int minM, maxM, selectingM, minN, maxN, selectingN, menuOption, menuSelecting, finishCustom = false;
+    selectingM = selectingN = minN = minM = 2;
+    maxM = 8; maxN = 16;
+    M = N = 0;
+    menuOption = 0;
+    menuSelecting = 1;
+    int x = offsetx + (width - 60) / 2;
+    int y = offsety + (height - 4*(2+1)) / 2;
+    while (!finishCustom){
+        drawBoxOnly(x,y,60,2,(menuSelecting == 1 ? 15: 6),"NUMBERS OF ROWS: "); gotoxy(x+20,y+1); cout << (selectingM > minM ? "< ": "  ") << setw(2) << right << selectingM << (selectingM < maxM ? " >": "  ");
+        drawBoxOnly(x,y + 3 ,60,2,(menuSelecting == 2 ? 15: 6),"NUMBERS OF COLS: "); gotoxy(x+20,y+4); cout << (selectingN > minN ? "< ": "  ") << setw(2) << right << selectingN << (selectingN < maxN ? " >": "  ");
+        drawBox(x,y + 6,60,2,(menuSelecting == 3 ? 15 * 16: 6),"CONFIRM");
+        drawBox(x,y + 9,60,2,(menuSelecting == 4 ? 15 * 16: 6),"RETURN");
+        switch(_getch()){
+        case KEY_UP: case 'w':
+            if (menuSelecting <= 1)
+                menuSelecting = 4;
+            else
+                menuSelecting--;
+            break;
+        case KEY_DOWN: case 's':
+            if (menuSelecting >= 4)
+                menuSelecting = 1;
+            else
+                menuSelecting++;
+            break;
+        case KEY_LEFT: case 'a':
+            if (menuSelecting == 1){
+                selectingM = max(selectingM - 1, minM);
+            }
+            else if (menuSelecting == 2){
+                selectingN = max(selectingN - 1, minN);
+            }
+            break;
+
+        case  KEY_RIGHT: case 'd':
+            if (menuSelecting == 1){
+                selectingM = min(selectingM + 1, maxM);
+            }
+            else if (menuSelecting == 2){
+                selectingN = min(selectingN + 1, maxN);
+            }
+            break;
+        case ' ':
+            menuOption = menuSelecting;
+            SetColor(0);
+            clearScreen();
+            break;
+        default:
+            break;
+        }
+        if (menuOption == 3){
+            if (validateColandRow(selectingM,selectingN)){
+                M = selectingM;
+                N = selectingN;
+                break;
+            }
+            else{
+                drawBox(offsetx + (width - 60) / 2, offsety + (height - 4)/2, 60,2,14*16+4,"M*N must be divisible by 2!! Press M(Menu) or R(Re-select)");
+                switch(_getch()){
+                case 'm':
+                    finishCustom = true;
+                    menuOption = -1;
+                    SetColor(7);
+                    clearScreen();
+                    break;
+                default:
+                    menuOption = -1;
+                    SetColor(7);
+                    clearScreen();
+                    break;
+                }
+            }
+
+        }
+        if (menuOption == 4){
+            finishCustom = true;
+            break;
+        }
+
+    }
+
+}
 //Hide show cursor
 void ShowConsoleCursor(bool showFlag)
 {

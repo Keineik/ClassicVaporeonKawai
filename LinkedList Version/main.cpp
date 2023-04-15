@@ -12,56 +12,49 @@ void printBoard() {
     }
 }
 */
-void printBoard() {
 
-    for (int i = 0; i <= M+1; i++) {
-        for (int j = 0; j <=  N+1; j++){
-            if (getData(i,j) != blankspace)
-                if((p1.first == i && p1.second == j)|| (p2.first == i && p2.second ==j))
-                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 13*16 , getData(i,j));
-                else if (choosing.first == i && choosing.second == j)
-                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , 15*16 , getData(i,j));
-                else
-                    drawCell(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w, h , CellColor[(getData(i,j) - 59)/3] , getData(i,j));
-            else{
-                SetColor(7);
-                clearCanvas(calculateCellPosX(j,w,h,boardposx), calculateCellPosY(i,w,h,boardposy), w,h);
-            }
-        }
-    }
-}
 // GAMEPLAY FUNCTION
 
 void updateBoard(){
-
-    drawCell(calculateCellPosX(oldchoosing.second,w,h,boardposx), calculateCellPosY(oldchoosing.first,w,h,boardposy), w, h , CellColor[(getData(oldchoosing.first,oldchoosing.second)- 59)/3] , getData(oldchoosing.first,oldchoosing.second));
-    drawCell(calculateCellPosX(choosing.second,w,h,boardposx), calculateCellPosY(choosing.first,w,h,boardposy), w, h , 7*16 , getData(choosing.first,choosing.second));
-    if (p1.first != 0 && p1.second != 0)
+    if (getData(oldchoosing.first,oldchoosing.second) != blankspace && oldchoosing.first > 0 && oldchoosing.second > 0){
+        drawCell(calculateCellPosX(oldchoosing.second,w,h,boardposx), calculateCellPosY(oldchoosing.first,w,h,boardposy), w, h , CellColor[(getData(oldchoosing.first,oldchoosing.second)- 59)/3] , getData(oldchoosing.first,oldchoosing.second));
+    }
+    else{
+        SetColor(6);
+        clearCanvas(calculateCellPosX(oldchoosing.second,w,h,boardposx), calculateCellPosY(oldchoosing.first,w,h,boardposy), w, h);
+    }
+    if (choosing.first >= 0 && choosing.second >=0)
+        drawCell(calculateCellPosX(choosing.second,w,h,boardposx), calculateCellPosY(choosing.first,w,h,boardposy), w, h , 7*16 , getData(choosing.first,choosing.second));
+    if (p1.first > 0 && p1.second > 0)
         drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , 15*16 , getData(p1.first, p1.second));
     if (p1.first > 0 && p1.second > 0 && p2.first > 0 && p2.second > 0){
         if (isLegalMove(p1, p2)) {
+            drawPath(path,boardposx,boardposy);
+            _getch();
+            clearVfx();
             changeData(p1.first, p1.second, blankspace);
             changeData(p2.first, p2.second, blankspace);
-            drawPath(path,boardposx,boardposy);
-            Sleep(100);
-            clearVfx();
             if (Level > 1) {
                 if (Level == 2 || Level == 3) {
                     deleteAndShiftBoard(p1.first);
                     deleteAndShiftBoard(p2.first);
+                    redrawRow(p1.first);
+                    redrawRow(p2.first);
                 }
                 else {
                     deleteAndShiftBoard(p1.second);
                     deleteAndShiftBoard(p2.second);
+                    redrawCol(p1.second);
+                    redrawCol(p2.second);
                 }
             }
             p1 = p2 = {0,0};
             }
-            else
-            {
-                drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(getData(p1.first, p1.second) - 59)/3] , getData(p1.first, p1.second));
-                p1 = p2 = {0,0};
-            }
+        else
+        {
+            drawCell(calculateCellPosX(p1.second,w,h,boardposx), calculateCellPosY(p1.first,w,h,boardposy), w, h , CellColor[(getData(p1.first, p1.second) - 59)/3] , getData(p1.first, p1.second));
+            p1 = p2 = {0,0};
+        }
     }
 
 }
@@ -115,17 +108,23 @@ void keyInput_Play(){
                 choosing.second = 1;
             }
             break;
+        case 'r':
+            shuffle();
+            printBoard();
+            p1 = p2 = {0,0};
+            choosing = {1,1};
+            break;
 
         case ' ':
-            if (halfpair){
-                p2 = choosing;
-                halfpair = false;
-            }
-            else{
-                p1 = choosing;
-                halfpair = true;
-            }
-
+            if (getData(choosing.first, choosing.second)!= blankspace)
+                if (halfpair){
+                    p2 = choosing;
+                    halfpair = false;
+                }
+                else{
+                    p1 = choosing;
+                    halfpair = true;
+                }
             break;
         case 'h':{
             //if (score >= 200){
@@ -139,6 +138,10 @@ void keyInput_Play(){
             //}
             break;
         }
+        case 'm':
+            deleteBoard();
+            stopPlay = true;
+            break;
         default:
             break;
         }
@@ -146,100 +149,84 @@ void keyInput_Play(){
 
 // GAMEPLAY FUNCTION
 void play() {
+        drawBox(0,0,width,height, 6, " ");
+        p1 = p2 = oldchoosing = {0,0};
+        choosing = {1,1};
+        initializeBoard();
+        offsetx = 0;
+        offsety = 0;
         boardposx = calculateBoardPosX();
         boardposy = calculateBoardPosY();
+        stopPlay = false;
         printBoard();
-        while (!isWin()){
+        gotoxy(20, 42); cout << "PRESS H FOR HINT - PRESS M TO RETURN TO MENU - PRESS R TO SHUFFLE";
+        while (!stopPlay) {
+            updateBoard();
             if (!isPlayable()) {
-                drawBox(offsetx+(width - 50)/2,offsety+(height-5)/2,50,5,6,"No valid move, shuffle!!! Press any key");
-                _getch();
-                shuffle();
-                Sleep(50);
-                clearScreen();
-                printBoard();
+                if (isWin() && Level == 5) {
+                     drawBox(offsetx + (width - 60) / 2,offsety + (height - 4) / 2,60, 4, 14*16 + 4 , " VICTORY!! PRESS ANY KEY");
+                    _getch();
 
-            }
-            else {
-                keyInput_Play();
-                updateBoard();
+                    break;
                 }
-            Sleep(40);
+                else if (isWin()) {
+                    p1 = p2 = oldchoosing = {0,0};
+                    halfpair = false;
+                    choosing = {1,1};
+                    deleteBoard();
+                    Level++;
+                    initializeBoard();
+                    printBoard();
+                    continue;
+                }
+                else{
+                    drawBox((width - 40)/2, (height - 4)/2, 40, 4, 6, "NO VALID MOVE! SHUFFLE!!");
+                     while (!isPlayable()){
+                        shuffle();
+                    }
+                    clearCanvas(1,1,width - 2, height - 2);
+                    printBoard();
+                }
+            }
+            keyInput_Play();
         }
-        if (isWin()){
-            p1 = p2 = oldchoosing = {0,0};
-            halfpair = false;
-            choosing = {1,1};
-            Sleep(20);
-            play();
-        }
-
-
 }
 
 
 
 int main () {
-
+    ShowConsoleCursor(FALSE);
+    resizeConsole(0,0,900,800);
     Level = 1;
-    p1 = p2 = oldchoosing = {0,0};
-    choosing = {1,1};
-    initializeBoard();
-    resizeConsole(0,0,1000,600);
-    offsetx = 0;
-    offsety = 0;
-    boardposx = calculateBoardPosX();
-    boardposy = calculateBoardPosY();
-    printBoard();
-    while (true) {
-        if (!isPlayable()) {
-            if (isWin() && Level == 5) {
-                 drawBox(offsetx + (width - 60) / 2,offsety + (height - 4) / 2,60, 4, 14*16 + 4 , " VICTORY!! PRESS ANY KEY");
-                _getch();
-
-                break;
-            }
-            else if (isWin()) {
-                p1 = p2 = oldchoosing = {0,0};
-                halfpair = false;
-                choosing = {1,1};
-                deleteBoard();
-                initializeBoard();
-                Level++;
-                continue;
-            }
-            else{
-                 while (!isPlayable()){
-                    shuffle();
-                }
-            }
+    endgame = false;
+    while (!endgame){
+        if (MenuChoice == -1)
+            showMenu();
+        SetColor(6);
+        clearScreen();
+        if (MenuChoice == 0){
+            M = 8; N = 16;
+            Level = 1;
+            play();
+            SetColor(6);
+            clearScreen();
+            MenuChoice = -1;
         }
-        printBoard();
-        keyInput_Play();
-        if (p1.first > 0 && p1.second > 0 && p2.first > 0 && p2.second > 0){
-            if (isLegalMove(p1, p2)) {
-                changeData(p1.first, p1.second, blankspace);
-                changeData(p2.first, p2.second, blankspace);
-                drawPath(path,boardposx,boardposy);
-                Sleep(100);
-                clearVfx();
-                if (Level > 1) {
-                    if (Level == 2 || Level == 3) {
-                        deleteAndShiftBoard(p1.first);
-                        deleteAndShiftBoard(p2.first);
-                    }
-                    else {
-                        deleteAndShiftBoard(p1.second);
-                        deleteAndShiftBoard(p2.second);
-                    }
-                }
-                p1 = p2 = {0,0};
-                }
-                else
-                    p1 = p2 = {0,0};
+        else if (MenuChoice == 1){
+            M = N = 0;
+            drawCustomnizeMenu();
+            if (M != 0 && N != 0){
+                Level = 1;
+                play();
+            }
+            SetColor(6);
+            clearScreen();
+            MenuChoice = -1;
         }
-
-
+        else
+            endgame = true;
     }
+
 
     deleteBoard();
     return 0;
