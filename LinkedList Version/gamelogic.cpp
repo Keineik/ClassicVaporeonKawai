@@ -66,7 +66,7 @@ void changeData(int x, int y, int data) {
     // move to desired linked list
     for (int i = 1; i < x; i++)
         curLL = curLL->next;
-    
+
     // move to desired node and change data
     Node *curNode = curLL->firstNode;
     for (int i = 1; i < y; i++)
@@ -135,7 +135,7 @@ void shuffle() {
     while (curLL != NULL) {
         curNode = curLL->firstNode;
         while (curNode != NULL) {
-            allData.push_back(curNode->data);
+            if (curNode->data != blankspace) allData.push_back(curNode->data);
             curNode = curNode->next;
         }
         curLL = curLL->next;
@@ -146,10 +146,12 @@ void shuffle() {
     while (curLL != NULL) {
         curNode = curLL->firstNode;
         while (curNode != NULL) {
-            uniform_int_distribution<int> ran{0, (int) allData.size() - 1};
-            int rNum = ran(mt);
-            curNode->data = allData[rNum];
-            allData.erase(allData.begin() + rNum);
+            if (curNode->data != blankspace) {
+                uniform_int_distribution<int> ran{0, (int) allData.size() - 1};
+                int rNum = ran(mt);
+                curNode->data = allData[rNum];
+                allData.erase(allData.begin() + rNum);
+            }
             curNode = curNode->next;
         }
         curLL = curLL->next;
@@ -364,6 +366,6 @@ bool isWin() {
             curLL = curLL->next;
         }
     }
-    
+
     return true;
 }
