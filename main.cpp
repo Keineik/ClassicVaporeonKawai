@@ -505,12 +505,14 @@ int main () {
                 else if (GuestMenuChoice == 3){
                     drawLeaderboard();
                     _getch();
+                    SetColor(6);
                     clearScreen();
                     GuestMenuChoice = -1;
                 }
                 else if (GuestMenuChoice == 4){
                     drawCredit();
                     _getch();
+                    SetColor(6);
                     clearScreen();
                     GuestMenuChoice = -1;
                 }

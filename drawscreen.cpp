@@ -1374,7 +1374,7 @@ void drawLeaderboardandHighScore(){
 void drawLeaderboard(){
     int x = offsetx + (width - 80)/2;
     int y = offsety + (height - 15)/2;
-    drawBox(offsetx + (width - 14) / 2, y - 4, 14,2, 6*16, " LEADERBOARD ");
+    drawBox(offsetx + (width - 14) / 2, y - 4, 14,2, 6*16, "LEADERBOARD");
     drawBox(x - 2,y,82,15,6*16," ");
     gotoxy(x,y + 1); cout << setw(10)<< setfill(' ') << left << "RANK" << setw(50) << left << "USERNAME" <<  setw(10) << "POINT" << setw(10)  << "DATE";
     int i = 0;
@@ -1403,6 +1403,7 @@ void drawLeaderboard(){
     gotoxy(x+8, y+2); cout << char(206);
     gotoxy(x+59, y+2); cout << char(206);
     gotoxy(x+69, y+2); cout << char(206);
+    drawBox(offsetx + (width - 25) / 2, y + 20, 25,2, 6*16, "PRESS ANY KEY TO EXIT");
 }
 // This function take menu - arrays of string variables and its size to draw onto the console
 void drawNormalMenu(int MenuSelecting, int MenuSize, menu Menu[]){
@@ -1722,6 +1723,9 @@ void drawHackingConsole(){
             }
             if (choice == 'y' || choice == 'Y'){
                 cout << "New points value:"; cin >> points;
+                while (points <= 0){
+                    cout << "Invalid Points!! Must be larger than 0: "; cin >> points;
+                }
             }
             cout << "Change time left? Y/n: "; cin >> choice;
             while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N' ){
@@ -1729,6 +1733,9 @@ void drawHackingConsole(){
             }
             if (choice == 'y' || choice == 'Y'){
                 cout << "New time left value:"; cin >> time;
+                while (time <= 0 || time > 360){
+                    cout << "Invalid Time left!! Must be between 1-360 : "; cin >> points;
+                }
             }
             hackState(slot,level,points,time,date);
             writeBinFile();

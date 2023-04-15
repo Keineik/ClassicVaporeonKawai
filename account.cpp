@@ -4,9 +4,7 @@ void readBinFile(string filename = "savefile.bin") {
     fstream fs;
     fs.open(filename, ios::in | ios::binary);
 
-    if (!fs.is_open()) {
-        cout << "File invalid";
-    }
+    if (!fs.is_open()) return;
     else {
         // get file size
         fs.seekg(0, ios::end);
@@ -115,7 +113,7 @@ void logout() {
 
 void saveGame(int saveSlot) {
     // save to currentSave
-    currentSave.state[saveSlot] = {M, N, 1, 1};
+    currentSave.state[saveSlot] = {M, N, choosing.first, choosing.second};
     currentSave.state[saveSlot].level = Level;
     currentSave.state[saveSlot].points = score;
     time_t now = time(0);
@@ -147,6 +145,7 @@ void loadGame(int saveSlot) {
 
     M = currentSave.state[saveSlot].p;
     N = currentSave.state[saveSlot].q;
+    choosing = {currentSave.state[saveSlot].p_, currentSave.state[saveSlot].q_};
     Level = currentSave.state[saveSlot].level;
     timeRemain = currentSave.state[saveSlot].time;
     initializeBoard();
@@ -182,7 +181,7 @@ void readLeaderboardFile(string filename = "leaderboard.bin") {
         fs.close();
     }
     else {
-        cout << "File not found" << endl;
+        return;
     }
 }
 
