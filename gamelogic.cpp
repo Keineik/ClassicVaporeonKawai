@@ -293,12 +293,12 @@ bool isWin() {
 
 // Calculate score according to streak
 void updateScore(){
-    //if (!isHint){
-        if (streak < 5)
-            streak ++;
-        score += streak*streakscore;
-    //}
-    //else{
-      //  isHint = false;// hint price =  200 score;
-    //}
+    if (streak < 5)
+        streak ++;
+    score += streak*streakscore;
+    if (isHint){
+         score -= (200 + streak*streakscore);
+         streak --;
+    }
+    isHint = false;
 }

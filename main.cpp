@@ -137,7 +137,7 @@ void keyInput_Play(){
             }
             break;
 
-        case ' ':
+        case SPACE:
             if (board[choosing.first][choosing.second]!= blankspace)
                 if (halfpair){
                     p2 = choosing;
@@ -151,7 +151,7 @@ void keyInput_Play(){
 
             break;
         case 'h':{
-           // if (score >= 200){
+           if (score >= 200){
                 //a hint is worth 200 score
                 isHint = true;
                 auto moveSuggested = moveSuggestion();
@@ -160,7 +160,7 @@ void keyInput_Play(){
                 choosing = moveSuggested.second;
                 halfpair = true;
 
-            //}
+            }
             break;
 
         }
@@ -175,10 +175,12 @@ void play() {
         offsetx = 0;
         stopPlay = false;
         halfpair = false;
+        streak = 0;
         initializeTimeBar();
         background_file[0] = '\0';
         // Link to the directory of background files
         string filename = ImageDir + backgroundAllwhite[Level - 1];
+        strcpy(background_file, filename.c_str());
         // Start create background
         initializeBackground(background, backw, backh,backgroundx,backgroundy, filename );
         string music = SoundDir + sound[Level - 1];
@@ -219,8 +221,10 @@ void play() {
                 else {
                     drawBox(offsetx + (width - 60) / 2,offsety + (height - 4) / 2,60, 4, 14*16 + 4 , " VICTORY!! Press R to continue or M to quit");
                     _getch();
-                    updateRecord();
-                    updateLeaderboard();
+                    if (successLogin || newAccount){
+                        updateRecord();
+                        updateLeaderboard();
+                    }
                     stopPlay = true;
                     score = 0;
                     deleteBoard();
@@ -362,7 +366,8 @@ int main () {
                     drawCustomnizeMenu();
                     if (M != 0 && N != 0){
                         initializeBoard();
-                        score = 0;
+                         score = 0; timeRemain = 360;
+                         streak = streakTimeRemain = 0;
                         initializeTimeBar();
                         choosing = {1,1};
                         p1 = p2 = oldchoosing = {0,0};
@@ -483,7 +488,8 @@ int main () {
                     drawCustomnizeMenu();
                     if (M != 0 && N != 0){
                         initializeBoard();
-                        score = 0;
+                        score = 0; timeRemain = 360;
+                        streak = streakTimeRemain = 0;
                         initializeTimeBar();
                         choosing = {1,1};
                         p1 = p2 = oldchoosing = {0,0};

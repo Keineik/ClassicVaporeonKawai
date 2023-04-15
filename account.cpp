@@ -116,6 +116,7 @@ void saveGame(int saveSlot) {
     currentSave.state[saveSlot] = {M, N, choosing.first, choosing.second};
     currentSave.state[saveSlot].level = Level;
     currentSave.state[saveSlot].points = score;
+    strcpy(currentSave.state[saveSlot].file_background, background_file);
     time_t now = time(0);
     tm *ltm = localtime(&now);
     currentSave.state[saveSlot].date = {ltm->tm_mday, 1 + ltm->tm_mon, 1900 + ltm->tm_year};
@@ -229,16 +230,16 @@ bool isValidDate(Date date) {
 }
 
 void hackState(int slot, int level, int points, int time, Date date) {
-    if (!(level >= 1 && level <= 5)) return;
-    if (time < 0) return;
-    if (!isValidDate(date)) return;
-
     for (auto &user: saves) {
         if (strcmp(user.name, currentSave.name) == 0) {
-            user.state[slot].level = level;
-            user.state[slot].points = points;
-            user.state[slot].time = time;
-            user.state[slot].date = date;
+            if (level > 0)
+                user.state[slot].level = level;
+            if (points > 0)
+                user.state[slot].points = points;
+            if (time > 0)
+                user.state[slot].time = time;
+            if (date.dd > 0 && date.mm > 0 && date.yy > 0);
+                user.state[slot].date = date;
             if (points > user.record[0].points) {
                 user.record[0].date = date;
                 user.record[0].points = points;
@@ -256,8 +257,6 @@ void hackState(int slot, int level, int points, int time, Date date) {
 }
 
 void hackRecord(int slot, Date date, int points) {
-    if (!isValidDate(date)) return;
-
     for (auto &user: saves) {
         if (strcmp(user.name, currentSave.name) == 0) {
             user.record[slot].date = date;

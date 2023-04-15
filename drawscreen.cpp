@@ -1,5 +1,6 @@
 #include "drawscreen.h"
 // Set console pointer to coordinator (x,y)
+//https://www.geeksforgeeks.org/how-to-use-gotoxy-in-codeblocks
 void gotoxy(int x, int y)
 {
   COORD coord;
@@ -9,6 +10,7 @@ void gotoxy(int x, int y)
 }
 
 // Modify console window
+//https://stackoverflow.com/questions/51344985/how-to-center-output-console-window-in-c
 void resizeConsole(int posx, int posy, int width, int height)
 {
     RECT rectClient, rectWindow;
@@ -38,6 +40,7 @@ void SetWindowSize()
 */
 //Set color for cout
 //Color is set by this format: X/16 is background color, X%16 is character color
+// Modified after the thread https://www.daniweb.com/programming/software-development/code/216345/add-a-little-color-to-your-console-text
 void SetColor(int x)
 {
     HANDLE h= GetStdHandle(STD_OUTPUT_HANDLE);
@@ -1158,7 +1161,7 @@ void drawHUD(){
     drawCell(hudx + 28, hudy + 32,w,h,15*16, 'M');
     SetColor(15);
     gotoxy(hudx+2, hudy + 37);
-    cout << "Hint( costs 200 scores): "; drawCell(hudx + 28, hudy + 36,w,h,15*16, 'H');
+    cout << "Hint (cost 200 scores): "; drawCell(hudx + 28, hudy + 36,w,h,15*16, 'H');
     drawBoxOnly(offsetx + 10,offsety + height + 5, 121,3,15," ");
     gotoxy(offsetx + 11,offsety + height + 6); SetColor(4*16+10); cout << setw(120) << setfill(' ') << right << UpperTimeBar;
     gotoxy(offsetx + 11,offsety + height + 7); SetColor(4*16+10); cout << setw(120) << setfill(' ') << right << LowerTimeBar;
@@ -1468,7 +1471,7 @@ void navigateMenu(int &MenuSelecting, int &MenuChoice, int MenuSize){
             else
                 MenuSelecting++;
             break;
-        case ' ':
+        case SPACE: case ENTER:
             MenuChoice = MenuSelecting;
             SetColor(0);
             clearScreen();
@@ -1757,6 +1760,9 @@ void drawHackingConsole(){
                     cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
                 }
             cout << "Points value:"; cin >> points;
+            while (points <= 0){
+                cout << "Invalid Points!! Must be larger than 0: "; cin >> points;
+            }
             hackRecord(5-slot,date,points);
             writeBinFile();
             writeLeaderboardFile();
