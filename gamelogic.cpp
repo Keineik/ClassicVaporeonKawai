@@ -302,4 +302,3 @@ void updateScore(){
       //  isHint = false;// hint price =  200 score;
     //}
 }
-

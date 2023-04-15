@@ -211,6 +211,9 @@ void drawLoginForm(){
     gotoxy(x, y + 5);
     cout << "PASSWORD (No longer than 50 chars)";
     drawBox(x,y + 6, 60,2,6," ");
+    gotoxy(x, y + 11); cout << "Press ENTER to confirm";
+    gotoxy(x, y + 12); cout << "Press BACKSPACE to erase while typing";
+    gotoxy(x, y + 13); cout << "Please don't press arrowkeys while typing. Please.";
     ShowConsoleCursor(true);
     gotoxy(x+1,(y+1)+(2/2));
     while(c = _getch()){
@@ -275,6 +278,9 @@ void drawSignupForm(){
     gotoxy(x,y+8);
     cout << "RE-TYPE PASSWORD";
     drawBox(x,y+9,60,2,6," ");
+    gotoxy(x, y + 13); cout << "Press ENTER to confirm";
+    gotoxy(x, y + 14); cout << "Press BACKSPACE to erase while typing";
+    gotoxy(x, y + 15); cout << "Please don't press arrowkeys while typing. Please.";
     ShowConsoleCursor(true);
     gotoxy(x+1,(y+1)+(2/2));
     while(c = _getch()){
@@ -1689,10 +1695,10 @@ void drawHackingConsole(){
             SetColor(10);
             cout << "Type your desired new value: "<< endl;
             cout << "Change date ? Y/n: "; cin  >> choice;
-            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+            while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N' ){
                 cout << "Please type Y or N: "; cin >> choice;
             }
-            if (tolower(choice) == 'y'){
+            if (choice == 'y' || choice == 'Y'){
                 cout << "New date value(dd/mm/yyyy): "; cin >> date.dd >> temp >> date.mm >> temp >> date.yy;
                 while(!isValidDate(date)){
                     cout << "Invalid date! Max is 31/12/9999, min is 01/01/0001" << endl; cout << "Please retype (dd/mm/yyyy): ";
@@ -1700,10 +1706,10 @@ void drawHackingConsole(){
                 }
             }
             cout << "Change level (1-5)? Y/n: "; cin >> choice;
-            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+            while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N' ){
                 cout << "Please type Y or N: "; cin >> choice;
             }
-            if (tolower(choice) == 'y'){
+            if (choice == 'y' || choice == 'Y'){
                 cout << "New level value: "; cin >> level;
                 while (level > 5 || level < 1){
                     cout << "Invalid level!! Please choose 1-5: "; cin >> level;
@@ -1711,17 +1717,17 @@ void drawHackingConsole(){
             }
 
             cout << "Change points? Y/n: "; cin >> choice;
-            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+            while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N' ){
                 cout << "Please type Y or N: "; cin >> choice;
             }
-            if (tolower(choice) == 'y'){
+            if (choice == 'y' || choice == 'Y'){
                 cout << "New points value:"; cin >> points;
             }
             cout << "Change time left? Y/n: "; cin >> choice;
-            while (choice != 'y' && choice != 'y' && choice != 'n' && choice != 'N' ){
+            while (choice != 'y' && choice != 'Y' && choice != 'n' && choice != 'N' ){
                 cout << "Please type Y or N: "; cin >> choice;
             }
-            if (tolower(choice) == 'y'){
+            if (choice == 'y' || choice == 'Y'){
                 cout << "New time left value:"; cin >> time;
             }
             hackState(slot,level,points,time,date);

@@ -138,14 +138,16 @@ void keyInput_Play(){
             break;
 
         case ' ':
-            if (halfpair){
-                p2 = choosing;
-                halfpair = false;
-            }
-            else{
-                p1 = choosing;
-                halfpair = true;
-            }
+            if (board[choosing.first][choosing.second]!= blankspace)
+                if (halfpair){
+                    p2 = choosing;
+                    halfpair = false;
+                }
+                else{
+                    p1 = choosing;
+                    halfpair = true;
+                }
+            break;
 
             break;
         case 'h':{
@@ -451,6 +453,7 @@ int main () {
                 GameMenuChoice = 0;
                 clearScreen();
                 drawBox(offsetx+(width - 40)/2, offsety+(height - 4) / 2,40,4, 14*16+12, "Success !! Press any key" );
+                writeBinFile();
                 _getch();
                 SetColor(15);
                 clearScreen();
